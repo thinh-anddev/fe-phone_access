@@ -1,4 +1,5 @@
 import axios from "axios";
+import {getAuthHeader} from "@/api/Order.ts";
 
 const updateAddress = async (body: any) => {
     try {
@@ -16,7 +17,8 @@ const updateAddress = async (body: any) => {
             customer: {
                 id: body.customerId
             }
-        })
+        },
+            { headers: getAuthHeader() })
         return { message: "Update address successfully", data: res.data.data }
     } catch (error) {
         console.log(error);

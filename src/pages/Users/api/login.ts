@@ -10,9 +10,10 @@ export const login = async (email: string, password: string) => {
       }
     );
     if (response.data.status == "ok") {
-      const user = response.data.data;
-      sessionStorage.setItem("user", JSON.stringify(user));
-      return { success: true, user: user };
+      const data = response.data.data;
+      sessionStorage.setItem("user", JSON.stringify(data.customer));
+      localStorage.setItem("token", data.token);
+      return { success: true, user: data.customer };
     } else {
       console.log(response.data);
       

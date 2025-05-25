@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {getAuthHeader} from "@/api/Order.ts";
 
 const addProduct = async (product: any, listImg: any[]) => {
   try {
@@ -25,7 +26,8 @@ const addProduct = async (product: any, listImg: any[]) => {
     }
     console.log(productInsert);
 
-    const response = await axios.post(`${import.meta.env.VITE_API_END_POINT}/products/insert`, productInsert);
+    const response = await axios.post(`${import.meta.env.VITE_API_END_POINT}/products/insert`, productInsert,
+        { headers: getAuthHeader() });
     return response.data;
   } catch (error) {
     console.error('Error adding product:', error);

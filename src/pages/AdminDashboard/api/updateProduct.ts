@@ -1,4 +1,5 @@
 import axios from "axios";
+import {getAuthHeader} from "@/api/Order.ts";
 
 const updateProduct = async (product: any) => {
     try {
@@ -29,7 +30,8 @@ const updateProduct = async (product: any) => {
         console.log(productUpdate);
         
            
-        const response = await axios.put(`${import.meta.env.VITE_API_END_POINT}/products/${product.id}`, productUpdate);
+        const response = await axios.put(`${import.meta.env.VITE_API_END_POINT}/products/${product.id}`, productUpdate,
+            { headers: getAuthHeader() });
         console.log(response);
         
         return response.data;

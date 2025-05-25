@@ -1,4 +1,5 @@
 import axios from "axios";
+import {getAuthHeader} from "@/api/Order.ts";
 
 const updatePassword = async (id: number, password: string, newPassword: string) => {
     try {
@@ -7,7 +8,8 @@ const updatePassword = async (id: number, password: string, newPassword: string)
             id,
             password,
             newPassword,
-        })
+        },
+            { headers: getAuthHeader() })
         if(res.data.status == "failed") {
             return { message: "Old password incorrect" };
         }
