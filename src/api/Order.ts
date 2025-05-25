@@ -1,9 +1,15 @@
 import axios from "axios";
-
+export const getAuthHeader = () => {
+  const token = localStorage.getItem("token");
+  return {
+    Authorization: token ? `Bearer ${token}` : "",
+  };
+};
 export const getAllOrders = async () => {
   try {
     const response = await axios.get(
-      `${import.meta.env.VITE_API_END_POINT}/orders/getAll`
+      `${import.meta.env.VITE_API_END_POINT}/orders/getAll`,
+        { headers: getAuthHeader() }
     );
     if (response.data.status == "ok") {
       return { success: true, orders: response.data.data };
@@ -18,7 +24,8 @@ export const getAllOrders = async () => {
 export const getAllYears = async () => {
   try {
     const response = await axios.get(
-      `${import.meta.env.VITE_API_END_POINT}/orders/getAllYear`
+      `${import.meta.env.VITE_API_END_POINT}/orders/getAllYear`,
+        { headers: getAuthHeader() }
     );
     if (response.data.status == "ok") {
       return { success: true, data: response.data.data };
@@ -33,7 +40,8 @@ export const getAllYears = async () => {
 export const getRevenueInYear = async (year: number) => {
   try {
     const response = await axios.get(
-      `${import.meta.env.VITE_API_END_POINT}/orders/revenueByYear?year=${year}`
+      `${import.meta.env.VITE_API_END_POINT}/orders/revenueByYear?year=${year}`,
+        { headers: getAuthHeader() }
     );
     if (response.data.status == "ok") {
       return { success: true, data: response.data.data };
@@ -50,7 +58,8 @@ export const getRevenueByCategory = async (month: number, year: number) => {
     const response = await axios.get(
       `${
         import.meta.env.VITE_API_END_POINT
-      }/orders/revenueByCategory?year=${year}&month=${month}`
+      }/orders/revenueByCategory?year=${year}&month=${month}`,
+        { headers: getAuthHeader() }
     );
     if (response.data.status == "ok") {
       return { success: true, data: response.data.data };
@@ -67,7 +76,8 @@ export const getByCustomer = async (idCustomer: number) => {
     const response = await axios.get(
       `${
         import.meta.env.VITE_API_END_POINT
-      }/orders/getByCustomer?customerId=${idCustomer}`
+      }/orders/getByCustomer?customerId=${idCustomer}`,
+        { headers: getAuthHeader() }
     );
     if (response.data.status == "ok") {
       return { success: true, data: response.data.data };
@@ -84,7 +94,8 @@ export const cancel = async (orderId: number) => {
     const response = await axios.get(
       `${
         import.meta.env.VITE_API_END_POINT
-      }/orders/cancelOrder?orderId=${orderId}`
+      }/orders/cancelOrder?orderId=${orderId}`,
+        { headers: getAuthHeader() }
     );
     if (response.data.status == "ok") {
       return { success: true, data: response.data.data };
@@ -101,7 +112,8 @@ export const update = async (orderId: number, status: number) => {
     const response = await axios.post(
       `${
         import.meta.env.VITE_API_END_POINT
-      }/orders/updateStatus?orderId=${orderId}&status=${status}`
+      }/orders/updateStatus?orderId=${orderId}&status=${status}`,
+        { headers: getAuthHeader() }
     );
     if (response.data.status == "ok") {
       return { success: true, data: response.data.data };

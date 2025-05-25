@@ -109,7 +109,7 @@ const CartRow: React.FC<CartRowProps> = (props) => {
         </div>
       </td>
       <td className="py-4 text-base font-bold text-center">
-        <div>{cartDetail.phoneCategory.name || "Không có"}</div>
+        <div>{cartDetail?.phoneCategory?.name || "Không có"}</div>
       </td>
       <td className="py-4 text-base font-bold text-center">
         <div>{formatPrice(cartDetail?.product?.price || 0)}</div>

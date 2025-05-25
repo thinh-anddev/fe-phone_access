@@ -53,6 +53,7 @@ const CartPage = () => {
   useEffect(() => {
     if (user) {
       getCartsByCustomerId(user.id).then((res) => {
+        console.log("=============",res);
         setCart(res.data);
         setItemsSelected(res.data);
       });
@@ -64,6 +65,7 @@ const CartPage = () => {
     const data = itemsSelected.map((item) => {
       return { id: item.id };
     });
+    console.log(data);
     const res = await getTotalPrice(data);
     if (res.success) {
       setTotal(() => res.data.data);
