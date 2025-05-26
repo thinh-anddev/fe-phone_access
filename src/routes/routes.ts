@@ -9,6 +9,7 @@ import LoginRegister from "../pages/Users";
 import ForgotPassPage from "../pages/Users/FogotPassPage";
 import SearchPage from "@/pages/SearchPage";
 import PaymentSuccess from "@/pages/PaymentSuccess/PaymentSuccess";
+import ContactPage from "@/pages/Contact/ContactPage.tsx";
 
 const pathName = {
   homepage: "/",
@@ -17,6 +18,7 @@ const pathName = {
   account: "/account",
   product_detail: "/product_detail/:id",
   products: "/products",
+  contact: "/contact",
   cart: "/cart",
   payment: "/payment",
   admin: "/admin_dashboard",
@@ -31,6 +33,7 @@ const routes = [
   { path: pathName.account, element: AccountPage },
   { path: pathName.product_detail, element: ProductDetailPage },
   { path: pathName.products, element: ProductsPage },
+  { path: pathName.contact, element: ContactPage },
   { path: pathName.cart, element: CartPage },
   { path: pathName.payment, element: PaymentPage },
   { path: pathName.admin, element: AdminDashboard },
