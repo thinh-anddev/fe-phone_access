@@ -80,7 +80,7 @@ const CategoryReport = () => {
               years.map((year) => {
                 return <option value={year}>{year}</option>;
               })}
-            {years.length == 0 && <option value={2024}>2024</option>}
+            {years.length == 0 && <option value={2025}>2025</option>}
           </select>
         </div>
       </div>

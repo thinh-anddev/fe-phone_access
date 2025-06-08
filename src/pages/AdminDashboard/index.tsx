@@ -57,7 +57,7 @@ const AdminDashboard = () => {
               onClick={() => navigateTo("/user")}
               className="transition-all cursor-pointer hover:text-primary"
             >
-              Dương Thanh Phụng
+              Thúy Thúy
             </div>
             <div
               onClick={() => navigateTo("/logout")}

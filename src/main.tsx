@@ -4,6 +4,7 @@ import "./index.css";
 import { ToastProvider } from "./hooks/ToastMessage/ToastContext.tsx";
 import ToastMessage from "./hooks/ToastMessage/ToastMessage.tsx";
 import { LoginProvider } from "./hooks/LoginStatus/LoginContext.tsx";
+// import './i18n';
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   // <React.StrictMode>
