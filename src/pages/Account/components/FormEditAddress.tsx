@@ -8,6 +8,7 @@ import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { LoginContext } from "@/hooks/LoginStatus/LoginContext";
 import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
 import updateAddress from "../api/updateAddress";
+import { useTranslation } from "react-i18next";
 
 interface FormEditAddressProps {
   hide: () => void;
@@ -16,10 +17,11 @@ interface FormEditAddressProps {
 }
 
 const FormEditAddress: React.FC<FormEditAddressProps> = ({
-  hide,
-  update,
-  address,
-}) => {
+                                                           hide,
+                                                           update,
+                                                           address,
+                                                         }) => {
+  const { t } = useTranslation();
   const { user } = useContext(LoginContext);
   const { showToast } = useContext(ToastContext);
   const [subAddress, setSubAddress] = useState(address?.subAddress);
@@ -27,57 +29,48 @@ const FormEditAddress: React.FC<FormEditAddressProps> = ({
   const [listDistrict, setListDistrict] = useState([]);
   const [listWard, setListWard] = useState([]);
 
-  const [provinceIdSelected, setProvinceIdSelected] = useState(
-    address.provinceId
-  );
-  const [districtIdSelected, setDistrictIdSelected] = useState(
-    address.districtId
-  );
+  const [provinceIdSelected, setProvinceIdSelected] = useState(address.provinceId);
+  const [districtIdSelected, setDistrictIdSelected] = useState(address.districtId);
   const [wardIdSelected, setWardIdSelected] = useState(address.wardId);
 
-  const [provinceValSelected, setProvinceValSelected] = useState(
-    address.provinceValue
-  );
-  const [districtValSelected, setDistrictValSelected] = useState(
-    address.districtValue
-  );
+  const [provinceValSelected, setProvinceValSelected] = useState(address.provinceValue);
+  const [districtValSelected, setDistrictValSelected] = useState(address.districtValue);
   const [wardValSelected, setWardValSelected] = useState(address.wardValue);
 
   const onChangeProvince = (e: ChangeEvent<HTMLSelectElement>) => {
     const idSelected = e.target.value;
-    setListDistrict(() => []);
-    setListWard(() => []);
+    setListDistrict([]);
+    setListWard([]);
     if (idSelected === "") {
-      setProvinceIdSelected(() => -1);
-      setProvinceValSelected(() => "");
+      setProvinceIdSelected(-1);
+      setProvinceValSelected("");
       return;
     }
 
-    setDistrictIdSelected(() => 0);
-    setWardIdSelected(() => 0);
+    setDistrictIdSelected(0);
+    setWardIdSelected(0);
     const valSelected = e.target.options[e.target.selectedIndex].text;
-    setProvinceIdSelected(() => parseInt(idSelected));
-    setProvinceValSelected(() => valSelected);
+    setProvinceIdSelected(parseInt(idSelected));
+    setProvinceValSelected(valSelected);
     getListDistrict(parseInt(idSelected)).then((res) => {
-      setListDistrict(() => res.data);
+      setListDistrict(res.data);
     });
   };
 
   const onChangeDistrict = (e: ChangeEvent<HTMLSelectElement>) => {
     const idSelected = e.target.value;
-    setListWard(() => []);
+    setListWard([]);
     if (idSelected === "") {
-      setDistrictIdSelected(() => -1);
-
+      setDistrictIdSelected(-1);
       return;
     }
-    setDistrictValSelected(() => "");
-    setWardIdSelected(() => 0);
+    setDistrictValSelected("");
+    setWardIdSelected(0);
     const valSelected = e.target.options[e.target.selectedIndex].text;
-    setDistrictIdSelected(() => parseInt(idSelected));
-    setDistrictValSelected(() => valSelected);
+    setDistrictIdSelected(parseInt(idSelected));
+    setDistrictValSelected(valSelected);
     getListWard(parseInt(idSelected)).then((res) => {
-      setListWard(() => res.data);
+      setListWard(res.data);
     });
   };
 
@@ -90,15 +83,15 @@ const FormEditAddress: React.FC<FormEditAddressProps> = ({
 
   const editAddress = async () => {
     if (
-      !subAddress ||
-      !wardIdSelected ||
-      !wardValSelected ||
-      !districtIdSelected ||
-      !districtValSelected ||
-      !provinceIdSelected ||
-      !provinceValSelected
+        !subAddress ||
+        !wardIdSelected ||
+        !wardValSelected ||
+        !districtIdSelected ||
+        !districtValSelected ||
+        !provinceIdSelected ||
+        !provinceValSelected
     ) {
-      showToast("Hãy thêm đầy đủ địa chỉ");
+      showToast(t("fill_address_completely"));
       return;
     }
 
@@ -122,123 +115,112 @@ const FormEditAddress: React.FC<FormEditAddressProps> = ({
 
   useEffect(() => {
     getListProvince().then((res) => {
-      setListProvince(() => res.data);
+      setListProvince(res.data);
     });
   }, []);
 
   useEffect(() => {
-    if (listProvince) {
+    if (listProvince.length) {
       const province = document.getElementById("province") as HTMLSelectElement;
       if (province) {
-        const defaultProvince = provinceIdSelected;
-        province.value = defaultProvince;
-        try {
-          getListDistrict(provinceIdSelected).then((res) => {
-            setListDistrict(res.data);
-          });
-        } catch (error) {
-          showToast("Error");
-        }
+        province.value = String(provinceIdSelected);
+        getListDistrict(provinceIdSelected).then((res) => {
+          setListDistrict(res.data);
+        });
       }
     }
   }, [listProvince]);
 
   useEffect(() => {
-    if (listDistrict) {
+    if (listDistrict.length) {
       const district = document.getElementById("district") as HTMLSelectElement;
       if (district) {
-        const defaultDistrict = districtIdSelected;
-        district.value = defaultDistrict;
-        try {
-          getListWard(districtIdSelected).then((res) => {
-            setListWard(res.data);
-          });
-        } catch (error) {
-          showToast("Error");
-        }
+        district.value = String(districtIdSelected);
+        getListWard(districtIdSelected).then((res) => {
+          setListWard(res.data);
+        });
       }
     }
   }, [listDistrict]);
 
   useEffect(() => {
-    if (listWard) {
+    if (listWard.length) {
       const ward = document.getElementById("ward") as HTMLSelectElement;
       if (ward) {
-        const defaultWard = wardIdSelected;
-        ward.value = defaultWard;
+        ward.value = String(wardIdSelected);
       }
     }
   }, [listWard]);
 
   return (
-    <>
-      <div
-        onClick={hide}
-        className="fixed z-[1] w-screen h-screen top-0 left-0 bg-black/30"
-      ></div>
-      <div className="flex gap-4 flex-col p-4 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2] bg-slate-300 w-[400px]">
-        <p className="text-2xl">thêm địa chỉ mới</p>
-        <input
-          className="p-2 border rounded"
-          type="text"
-          placeholder="Đường, số nhà"
-          value={subAddress || address.subAddress}
-          onChange={(e) => setSubAddress(e.target.value)}
-        />
-        <select
-          id="province"
-          onChange={(e) => onChangeProvince(e)}
-          className="p-2 rounded border"
-        >
-          <option value="">Tỉnh/Thành phố</option>
-          {listProvince?.map((province: any) => (
-            <option key={province.ProvinceID} value={province.ProvinceID}>
-              {province.ProvinceName}
-            </option>
-          ))}
-        </select>
-        <select
-          id="district"
-          onChange={(e) => onChangeDistrict(e)}
-          className="p-2 rounded border"
-        >
-          <option value="">Quận/Huyện</option>
-          {listDistrict?.map((district: any) => (
-            <option key={district.DistrictID} value={district.DistrictID}>
-              {district.DistrictName}
-            </option>
-          ))}
-        </select>
-        <select
-          id="ward"
-          defaultValue={wardIdSelected}
-          onChange={(e) => handleChangeWard(e)}
-          className="p-2 rounded border"
-        >
-          <option value="">Phường/Xã</option>
-          {listWard?.map((ward: any) => (
-            <option key={ward.WardCode} value={ward.WardCode}>
-              {ward.WardName}
-            </option>
-          ))}
-        </select>
-
-        <div className="flex gap-x-2">
-          <Button
+      <>
+        <div
             onClick={hide}
-            className="flex-1 py-1 border rounded hover:border-black"
+            className="fixed z-[1] w-screen h-screen top-0 left-0 bg-black/30"
+        ></div>
+        <div className="flex gap-4 flex-col p-4 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2] bg-slate-300 w-[400px]">
+          <p className="text-2xl">{t("add_new_address")}</p>
+          <input
+              className="p-2 border rounded"
+              type="text"
+              placeholder={t("street_house_number")}
+              value={subAddress || address.subAddress}
+              onChange={(e) => setSubAddress(e.target.value)}
+          />
+          <select
+              id="province"
+              onChange={onChangeProvince}
+              className="p-2 rounded border"
           >
-            Huỷ
-          </Button>
-          <Button
-            onClick={editAddress}
-            className="flex-1 py-1 rounded bg-primary hover:bg-white"
+            <option value="">{t("province_city")}</option>
+            {listProvince.map((province: any) => (
+                <option key={province.ProvinceID} value={province.ProvinceID}>
+                  {province.ProvinceName}
+                </option>
+            ))}
+          </select>
+          <select
+              id="district"
+              onChange={onChangeDistrict}
+              className="p-2 rounded border"
           >
-            Thêm
-          </Button>
+            <option value="">{t("district")}</option>
+            {listDistrict.map((district: any) => (
+                <option key={district.DistrictID} value={district.DistrictID}>
+                  {district.DistrictName}
+                </option>
+            ))}
+          </select>
+          <select
+              id="ward"
+              defaultValue={wardIdSelected}
+              onChange={handleChangeWard}
+              className="p-2 rounded border"
+          >
+            <option value="">{t("ward_commune")}</option>
+            {listWard.map((ward: any) => (
+                <option key={ward.WardCode} value={ward.WardCode}>
+                  {ward.WardName}
+                </option>
+            ))}
+          </select>
+
+          <div className="flex gap-x-2">
+            <Button
+                onClick={hide}
+                className="flex-1 py-1 border rounded hover:border-black"
+            >
+              {t("no")}
+            </Button>
+            <Button
+                onClick={editAddress}
+                className="flex-1 py-1 rounded bg-primary hover:bg-white"
+            >
+              {t("add")}
+            </Button>
+          </div>
         </div>
-      </div>
-    </>
+      </>
   );
 };
 

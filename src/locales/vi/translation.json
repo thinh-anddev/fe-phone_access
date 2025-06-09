@@ -57,5 +57,18 @@
     "full_name": "Họ tên",
     "phone": "Điện thoại",
     "update": "Cập nhật",
-    "my_account": "Tài khoản của tôi"
+    "my_account": "Tài khoản của tôi",
+    "edit": "Chỉnh sửa",
+    "remove": "Xóa bỏ",
+    "error": "Lỗi",
+    "user_profile": "Thông tin người dùng",
+    "add_address": "Thêm địa chỉ",
+    "fill_address_completely": "Hãy thêm đầy đủ địa chỉ",
+    "add_new_address": "Thêm địa chỉ mới",
+    "province_city": "Tỉnh/Thành phố",
+    "district": "Quận/Huyện",
+    "ward_commune": "Phường/Xã",
+    "street_house_number": "Đường, số nhà",
+    "add": "Thêm"
+
 }
