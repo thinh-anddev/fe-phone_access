@@ -2,6 +2,7 @@ import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
 import { useContext, useState } from "react";
 import updatePassword from "./api/updatePassword";
 import { LoginContext } from "@/hooks/LoginStatus/LoginContext";
+import { useTranslation } from "react-i18next";
 
 const ChangePassword = () => {
   const [oldPass, setOldPass] = useState("");
@@ -9,14 +10,16 @@ const ChangePassword = () => {
   const [retypeNewPass, setRetypeNewPass] = useState("");
   const { showToast } = useContext(ToastContext);
   const { user } = useContext(LoginContext);
+  const { t } = useTranslation();
+
 
   const handleSubmit = async () => {
     if (!oldPass || !newPass || !retypeNewPass) {
-      showToast("Vui lòng nhập đầy đủ");
+      showToast(t('please_enter_full_information'));
       return;
     }
     if (newPass !== retypeNewPass) {
-      showToast("Mật khẩu không trùng khớp");
+      showToast(t('passwords_do_not_match'));
       return;
     }
 
@@ -33,10 +36,10 @@ const ChangePassword = () => {
 
   return (
     <div className="flex flex-col gap-2 p-5">
-      <div className="text-[25px]">Đổi mật khẩu</div>
+      <div className="text-[25px]">{t('change_password')}</div>
       <div className="flex flex-col items-center gap-1 px-10 py-4 gap-y-2">
         <div className="grid items-center w-full grid-cols-5 select-none">
-          <div className="col-span-1">Mật khẩu cũ</div>
+          <div className="col-span-1">{t('old_password')}</div>
           <input
             type="password"
             value={oldPass}
@@ -45,7 +48,7 @@ const ChangePassword = () => {
           />
         </div>
         <div className="grid items-center w-full grid-cols-5 select-none">
-          <div className="col-span-1">Mật khẩu mới</div>
+          <div className="col-span-1">{t('new_password')}</div>
           <input
             type="password"
             value={newPass}
@@ -54,7 +57,7 @@ const ChangePassword = () => {
           />
         </div>
         <div className="grid items-center w-full grid-cols-5 select-none">
-          <div className="col-span-1">Xác nhận mật khẩu</div>
+          <div className="col-span-1">{t('confirm_password')}</div>
           <input
             type="password"
             value={retypeNewPass}
@@ -66,7 +69,7 @@ const ChangePassword = () => {
           onClick={() => handleSubmit()}
           className="px-4 py-2 m-2 rounded select-none bg-primary hover:bg-opacity-80 w-fit"
         >
-          Cập nhật
+          {t('update')}
         </button>
       </div>
     </div>

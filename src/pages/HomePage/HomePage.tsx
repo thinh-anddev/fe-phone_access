@@ -10,7 +10,7 @@ import { ProductType } from "@/utils/models";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-// import Language from "@/pages/Account/Language"; // Import component Language
+
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -110,7 +110,7 @@ const HomePage = () => {
         </section>
 
         <section className="flex flex-col items-center gap-2 mx-auto mt-16 max-w-7xl">
-          <div className="text-3xl font-black">{t('top_selling_products')}</div>
+          <div className="text-3xl font-black">{t('top_selling_product')}</div>
           <div className="grid my-6 xl:grid-cols-4 gap-14 md:grid-cols-2 sm:grid-cols-2">
             {bestSaleProducts.map((product) => (
                 <ProductCard product={product} key={product.id} />

@@ -8,6 +8,7 @@ import { ChangeEvent, useContext, useEffect, useState } from "react";
 import addAddress from "../api/addAddress";
 import { LoginContext } from "@/hooks/LoginStatus/LoginContext";
 import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
+import { useTranslation } from "react-i18next";
 
 interface FormAddAddressProps {
   hide: () => void;
@@ -17,6 +18,8 @@ interface FormAddAddressProps {
 const FormAddAddress: React.FC<FormAddAddressProps> = ({ hide, update }) => {
   const { user } = useContext(LoginContext);
   const { showToast } = useContext(ToastContext);
+  const { t } = useTranslation();
+
   const [subAddress, setSubAddress] = useState("");
 
   const [listProvince, setListProvince] = useState([]);
@@ -81,15 +84,15 @@ const FormAddAddress: React.FC<FormAddAddressProps> = ({ hide, update }) => {
 
   const insertAddress = async () => {
     if (
-      !subAddress ||
-      !wardIdSelected ||
-      !wardValSelected ||
-      !districtIdSelected ||
-      !districtValSelected ||
-      !provinceIdSelected ||
-      !provinceValSelected
+        !subAddress ||
+        !wardIdSelected ||
+        !wardValSelected ||
+        !districtIdSelected ||
+        !districtValSelected ||
+        !provinceIdSelected ||
+        !provinceValSelected
     ) {
-      showToast("Hãy thêm đầy đủ địa chỉ");
+      showToast(t("fill_address_completely"));
       return;
     }
 
@@ -112,71 +115,71 @@ const FormAddAddress: React.FC<FormAddAddressProps> = ({ hide, update }) => {
   };
 
   return (
-    <>
-      <div
-        onClick={hide}
-        className="fixed z-[1] w-screen h-screen top-0 left-0 bg-black/30"
-      ></div>
-      <div className="flex gap-4 flex-col p-4 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2] bg-slate-300 w-[400px]">
-        <p className="text-2xl">thêm địa chỉ mới</p>
-        <input
-          className="p-2 border rounded"
-          type="text"
-          placeholder="Đường, số nhà"
-          value={subAddress}
-          onChange={(e) => setSubAddress(e.target.value)}
-        />
-
-        <select
-          onChange={(e) => onChangeProvince(e)}
-          className="p-2 rounded border"
-        >
-          <option value="">Tỉnh/Thành phố</option>
-          {listProvince.map((province: any) => (
-            <option key={province.ProvinceID} value={province.ProvinceID}>
-              {province.ProvinceName}
-            </option>
-          ))}
-        </select>
-        <select
-          onChange={(e) => onChangeDistrict(e)}
-          className="p-2 rounded border"
-        >
-          <option value="">Quận/Huyện</option>
-          {listDistrict.map((district: any) => (
-            <option key={district.DistrictID} value={district.DistrictID}>
-              {district.DistrictName}
-            </option>
-          ))}
-        </select>
-        <select
-          onChange={(e) => handleChangeWard(e)}
-          className="p-2 rounded border"
-        >
-          <option value="">Phường/Xã</option>
-          {listWard.map((ward: any) => (
-            <option key={ward.WardCode} value={ward.WardCode}>
-              {ward.WardName}
-            </option>
-          ))}
-        </select>
-
-        <div className="flex gap-x-2">
-          <Button
+      <>
+        <div
             onClick={hide}
-            className="flex-1 py-1 border rounded hover:border-black"
+            className="fixed z-[1] w-screen h-screen top-0 left-0 bg-black/30"
+        ></div>
+        <div className="flex gap-4 flex-col p-4 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2] bg-slate-300 w-[400px]">
+          <p className="text-2xl">{t("add_new_address")}</p>
+          <input
+              className="p-2 border rounded"
+              type="text"
+              placeholder={t("street_house_number")}
+              value={subAddress}
+              onChange={(e) => setSubAddress(e.target.value)}
+          />
+
+          <select
+              onChange={(e) => onChangeProvince(e)}
+              className="p-2 rounded border"
           >
-            Huỷ
-          </Button>
-          <Button
-            onClick={insertAddress}
-            className="flex-1 py-1 rounded bg-primary hover:bg-white"
+            <option value="">{t("province_city")}</option>
+            {listProvince.map((province: any) => (
+                <option key={province.ProvinceID} value={province.ProvinceID}>
+                  {province.ProvinceName}
+                </option>
+            ))}
+          </select>
+          <select
+              onChange={(e) => onChangeDistrict(e)}
+              className="p-2 rounded border"
           >
-            Thêm
-          </Button>
+            <option value="">{t("district")}</option>
+            {listDistrict.map((district: any) => (
+                <option key={district.DistrictID} value={district.DistrictID}>
+                  {district.DistrictName}
+                </option>
+            ))}
+          </select>
+          <select
+              onChange={(e) => handleChangeWard(e)}
+              className="p-2 rounded border"
+          >
+            <option value="">{t("ward_commune")}</option>
+            {listWard.map((ward: any) => (
+                <option key={ward.WardCode} value={ward.WardCode}>
+                  {ward.WardName}
+                </option>
+            ))}
+          </select>
+
+          <div className="flex gap-x-2">
+            <Button
+                onClick={hide}
+                className="flex-1 py-1 border rounded hover:border-black"
+            >
+              {t("no")}
+            </Button>
+            <Button
+                onClick={insertAddress}
+                className="flex-1 py-1 rounded bg-primary hover:bg-white"
+            >
+              {t("add")}
+            </Button>
+          </div>
         </div>
-      </div>
-    </>
+      </>
   );
 };
 
