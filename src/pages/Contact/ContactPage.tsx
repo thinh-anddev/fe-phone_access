@@ -1,4 +1,6 @@
 import React, { FormEvent } from "react";
+import { useTranslation } from "react-i18next";
+
 
 const ContactPage: React.FC = () => {
     const handleSubmit = (e: FormEvent) => {
@@ -6,6 +8,7 @@ const ContactPage: React.FC = () => {
         // Xử lý submit form ở đây (ví dụ gửi API)
         alert("Gửi liên hệ thành công!");
     };
+    const { t } = useTranslation();
 
     return (
         <div className="max-w mr-20 ml-20 px-4 py-12 flex flex-col md:flex-row gap-8">
@@ -63,11 +66,11 @@ const ContactPage: React.FC = () => {
 
                 {/* Contact form */}
                 <div>
-                    <h3 className="font-semibold text-lg mb-6">Liên hệ với chúng tôi</h3>
+                    <h3 className="font-semibold text-lg mb-6">{t("contact_us")}</h3>
                     <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
                         <input
                             type="text"
-                            placeholder="Họ và tên"
+                            placeholder={t('full_name')}
                             className="w-full px-4 py-3 border border-gray-300 rounded-full placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
                             required
                         />
@@ -78,7 +81,7 @@ const ContactPage: React.FC = () => {
                             required
                         />
                         <textarea
-                            placeholder="Nội dung"
+                            placeholder={t('content')}
                             rows={5}
                             className="w-full px-4 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 resize-none"
                             required
@@ -87,7 +90,7 @@ const ContactPage: React.FC = () => {
                             type="submit"
                             className="text-white bg-primary hover:bg-purple-800 font-semibold rounded-lg px-8 py-3  transition"
                         >
-                            Gửi liên hệ
+                            {t(('send_contact'))}
                         </button>
                     </form>
                 </div>

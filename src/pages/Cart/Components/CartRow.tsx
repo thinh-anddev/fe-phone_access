@@ -14,6 +14,7 @@ import { deleteCartDetail } from "../api";
 import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
 import { CartPageContext } from "../CartPage";
 import { LoginContext } from "@/hooks/LoginStatus/LoginContext";
+import { useTranslation } from "react-i18next";
 
 interface CartRowProps {
   cartDetail: CartDetailType;
@@ -29,10 +30,11 @@ const CartRow: React.FC<CartRowProps> = (props) => {
   const { setTotal } = useContext(CartPageContext);
   const [isChecked, setIsChecked] = useState(true);
   const { setCartQuantity } = useContext(LoginContext);
+  const { t } = useTranslation();
 
   const handleDeleteRow = () => {
     deleteCartDetail(cartDetail.id).then(() => {
-      toast.showToast("Xóa sản phẩm thành công");
+      toast.showToast(t('product_deleted_successfully'));
       window.location.reload();
     });
   };
