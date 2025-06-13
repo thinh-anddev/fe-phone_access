@@ -13,11 +13,13 @@ import saveOrder from "./api/saveOrder";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@chakra-ui/react";
 import getLinkVNPay from "./api/getLinkVNPay";
+import { useTranslation } from "react-i18next";
 
 const PaymentPage = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const { t } = useTranslation();
 
   const [listProvince, setListProvince] = useState([]);
   const [listDistrict, setListDistrict] = useState([]);
@@ -123,11 +125,11 @@ const PaymentPage = () => {
 
   const handleApplyDiscount = () => {
     if (discount < 0) {
-      showToast("Vui lòng nhập số điểm giảm giá hợp lệ");
+      showToast(t("invalid_discount_points"));
       return;
     }
     if (discount > user.point) {
-      showToast("Điểm giảm giá không đủ");
+      showToast(t("not_enough_discount_points"));
       return;
     }
     setPointAccepted(discount);
@@ -349,7 +351,7 @@ const PaymentPage = () => {
       if (vnpResponseCode) {
         if (vnpResponseCode == "00") handleSubmit();
         else {
-          showToast("Thanh toán thất bại");
+          showToast(t("payment_failed"));
           navigate("/payment");
         }
       }

@@ -78,6 +78,20 @@
     "provisional": "Tạm Tính",
     "continue_shopping": "Tiếp tục mua hàng",
     "product_deleted_successfully": "Xóa sản phẩm thành công",
-    "cannot_get_cart_of_this_user": "Không thể lấy giỏ hàng của người dùng này"
+    "cannot_get_cart_of_this_user": "Không thể lấy giỏ hàng của người dùng này",
+    "contact_us": "Liên hệ với chúng tôi",
+    "full_name": "Họ và tên",
+    "content": "Nội dung",
+    "send_contact": "Gửi liên hệ",
+    "policy_title": "Chính sách đổi trả hàng hóa",
+    "policy_accessories_title": "Chính sách đổi trả phụ kiện điện thoại",
+    "policy_scope": "Phạm vi áp dụng: Áp dụng cho tất cả sản phẩm phụ kiện điện thoại mua tại cửa hàng/website.",
+    "policy_condition": "Điều kiện đổi trả: Sản phẩm còn nguyên tem, chưa qua sử dụng và không bị hư hỏng do khách hàng. Thời gian đổi trả trong vòng 7 ngày kể từ ngày nhận hàng.",
+    "policy_process": "Quy trình đổi trả: Liên hệ bộ phận chăm sóc khách hàng để được hướng dẫn, cung cấp hóa đơn và mô tả lỗi (nếu có).",
+    "policy_note": "Lưu ý: Sản phẩm lỗi do nhà sản xuất sẽ được đổi mới hoặc hoàn tiền. Sản phẩm lỗi do khách hàng không thuộc phạm vi đổi trả. Chi phí vận chuyển do bên gây lỗi chịu.",
+    "invalid_discount_points": "Vui lòng nhập số điểm giảm giá hợp lệ",
+    "not_enough_discount_points": "Điểm giảm giá không đủ",
+    "payment_failed": "Thanh toán thất bại"
+
 
 }
