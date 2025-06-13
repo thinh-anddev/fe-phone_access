@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import UpdateQuantity from "../../../components/Quantity/UpdateQuantity";
 import { CartDetailType, ProductType } from "@/utils/models";
 import { formatPrice } from "@/utils";
-import { getCartsByCustomerId, insertNewCartDetail } from "@/pages/Cart/api";
+import { getCarts, insertNewCartDetail } from "@/pages/Cart/api";
 import { getUserFromSession } from "@/utils/User";
 import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
 
@@ -20,7 +20,7 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
 
   useEffect(() => {
     if (user) {
-      getCartsByCustomerId(user.id).then((res) => {
+      getCarts().then((res) => {
         setCarts(res.data);
       });
     } else {

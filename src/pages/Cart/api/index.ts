@@ -1,10 +1,10 @@
 import axios from "axios";
-import {getAuthHeader} from "@/api/Order.ts";
+import { getAuthHeader } from "@/api/Order.ts";
 
-export const getCartsByCustomerId = async (id: number) => {
+export const getCarts = async () => {
   try {
     const response = await axios.get(
-        `${import.meta.env.VITE_API_END_POINT}/carts/getByCustomerId/${id}`,
+        `${import.meta.env.VITE_API_END_POINT}/carts`,
         { headers: getAuthHeader() }
     );
 

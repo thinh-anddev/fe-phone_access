@@ -4,7 +4,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { getUserFromSession } from "@/utils/User";
 import { useContext, useEffect } from "react";
 import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
-import { getCartsByCustomerId } from "../Cart/api";
+import { getCarts } from "../Cart/api";
 import SearchBar from "./Search";
 import { LoginContext } from "@/hooks/LoginStatus/LoginContext";
 import CategoryBar from "./CategoryBar";
@@ -35,7 +35,7 @@ const Header = () => {
 
   const getCartQuantity = () => {
     if (user)
-      getCartsByCustomerId(user.id).then((res) => {
+      getCarts().then((res) => {
         setCartQuantity(() => {
           return res?.data?.reduce((total: number, item: CartDetailType) => {
             return total + item.quantity;
