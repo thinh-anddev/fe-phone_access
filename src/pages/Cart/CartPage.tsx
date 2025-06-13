@@ -13,6 +13,7 @@ import { CartDetailType } from "@/utils/models";
 import { getUserFromSession } from "@/utils/User";
 import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
 import { formatPrice } from "@/utils";
+import { useTranslation } from "react-i18next";
 
 interface CartPageContextProps {
   calTotal: () => void;
@@ -31,6 +32,7 @@ const CartPage = () => {
   const toast = useContext(ToastContext);
   const [itemsSelected, setItemsSelected] = useState<CartDetailType[]>([]);
   const { showToast } = useContext(ToastContext);
+  const { t } = useTranslation();
 
   function navigateTo(link: string) {
     navigate(link);
@@ -39,7 +41,7 @@ const CartPage = () => {
 
   const handlePay = () => {
     if (itemsSelected.length <= 0) {
-      showToast("Vui lòng chọn ít nhất 1 sản phẩm");
+      showToast(t('please_select_at_least_1_product'));
       return;
     }
     console.log(itemsSelected);
@@ -58,7 +60,7 @@ const CartPage = () => {
         setItemsSelected(res.data);
       });
     } else {
-      toast.showToast("Vui lòng đăng nhập để xem giỏ hàng");
+      toast.showToast(t('please_login_to_view_cart'));
     }
   }, []);
   const calTotal = async () => {
@@ -90,13 +92,13 @@ const CartPage = () => {
               <thead>
               <tr className="border-2 border-solid ">
                 <th className="py-2 w-[50px]"></th>
-                <th className="py-2 font-extrabold ">Sản phẩm</th>
-                <th className="py-2 font-extrabold">Mô tả</th>
-                <th className="py-2 font-extrabold">Phân loại</th>
+                <th className="py-2 font-extrabold ">{t('product')}</th>
+                <th className="py-2 font-extrabold">{t('describe')}</th>
+                <th className="py-2 font-extrabold">{t('classify')}</th>
 
-                <th className="py-2 font-extrabold">Giá</th>
-                <th className="py-2 font-extrabold">Số lượng</th>
-                <th className="py-2 font-extrabold">Tổng</th>
+                <th className="py-2 font-extrabold">{t('price')}</th>
+                <th className="py-2 font-extrabold">{t('quantity')}</th>
+                <th className="py-2 font-extrabold">{t('total')}</th>
                 <th className="py-2 font-extrabold"></th>
               </tr>
               </thead>
@@ -118,7 +120,7 @@ const CartPage = () => {
               <div className="flex flex-col items-end gap-5">
                 <div className="flex justify-between gap-20">
                   <div className="text-3xl font-extrabold text-primary ">
-                    Tạm tính
+                    {t('provisional')}
                   </div>
                   <div className="text-3xl font-extrabold text-primary ">
                     {formatPrice(total)}
@@ -129,13 +131,13 @@ const CartPage = () => {
                       onClick={() => navigateTo("/")}
                       className="px-10 py-3 text-xl font-extrabold text-white duration-300 rounded-full bg-primary hover:bg-purple-500"
                   >
-                    Tiếp tục mua hàng
+                    {t('continue_shopping')}
                   </button>
                   <button
                       onClick={handlePay}
                       className="px-10 py-3 text-xl font-extrabold duration-300 border-2 border-solid rounded-full border-primary text-primary hover:bg-purple-500 hover:text-white"
                   >
-                    Thanh toán
+                    {t('payment_method')}
                   </button>
                 </div>
               </div>

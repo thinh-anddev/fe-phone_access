@@ -1,6 +1,4 @@
 {
-    "welcome": "Welcome to my application",
-    "description": "This is a multilingual application built with React and TypeScript.",
     "top_selling_product": "Top Selling Product",
     "new_products": "New Products",
     "please_enter_full_information": "Please enter full information",
@@ -67,6 +65,12 @@
     "ward_commune": "Ward/Commune",
     "street_house_number": "Street, House Number",
     "add": "Add",
-    "view_more": "View more"
-
+    "view_more": "View more",
+    "please_select_at_least_1_product": "Please select at least 1 product",
+    "please_login_to_view_cart": "Please login to view cart",
+    "describe": "Describe",
+    "classify": "Classify",
+    "price": "Price",
+    "total": "Total",
+    "provisional": "Provisional"
 }
