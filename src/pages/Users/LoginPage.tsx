@@ -16,7 +16,11 @@ const Login = () => {
     const res = await login(userName, password);
     if (res.success) {
       setUser(res.user);
-      navigate("/");
+      if(res.user.role==1){
+          navigate("/admin_dashboard");
+          window.location.reload();
+      }
+      else navigate("/");
       showToast("Login successfully!");
     } else {
       showToast(res.message);

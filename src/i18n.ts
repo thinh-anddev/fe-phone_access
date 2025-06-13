@@ -17,12 +17,12 @@ const resources = {
         translation: viTranslation as TranslationResources,
     },
 };
-
+const savedLanguage = localStorage.getItem('language')|| 'vi';
 i18n
     .use(initReactI18next)
     .init({
         resources,
-        lng: 'vi',
+        lng: savedLanguage,
         fallbackLng: 'en',
         interpolation: {
             escapeValue: false,
