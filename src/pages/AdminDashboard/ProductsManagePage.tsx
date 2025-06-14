@@ -40,7 +40,7 @@ const ProductsManagePage = () => {
 
   return (
       <ManageDashboard
-          subjectName="sản phẩm"
+          subjectName="Sản Phẩm"
           prouducts={allProduct}
           updateList={getProducts}
           onSearch={handleSearch}

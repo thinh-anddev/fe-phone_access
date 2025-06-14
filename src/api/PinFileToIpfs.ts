@@ -41,7 +41,7 @@ export const handleSubmission = async (
     try {
       if (image) {
         const resData = await handleSubmission(image, nameImage);
-        return `${import.meta.env.VITE_GATEWAY_URL}/ipfs/${resData.IpfsHash}`;
+        return `https://${import.meta.env.VITE_GATEWAY_URL}/ipfs/${resData.IpfsHash}`;
       }
       return null;
     } catch (error) {

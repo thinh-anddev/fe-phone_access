@@ -239,7 +239,7 @@ interface FormAddProps {
 }
 
 const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
-  const initialFormData: any = {
+  const initialFormData: ProductFormData = {
     id: 0, // ID sẽ được tạo tự động
     name: "",
     description: "",
@@ -254,45 +254,39 @@ const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
     phoneCategoryIds: [],
   };
 
-  const [formData, setFormData] = useState<any>(initialFormData);
-  const [files, setFiles] = useState<any | null[]>([null, null, null]);
+  const [formData, setFormData] = useState<ProductFormData>(initialFormData);
+  const [files, setFiles] = useState<(FileList | null)[]>([null, null, null]);
 
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prevData: any) => ({
+    setFormData((prevData) => ({
       ...prevData,
       [name]:
-        name === "price" ||
-        name === "discount" ||
-        name === "quantity" ||
-        name === "sold" ||
-        name === "categoryId" ||
-        name === "status"
-          ? Number(value)
-          : value,
+          name === "price" ||
+          name === "discount" ||
+          name === "quantity" ||
+          name === "sold" ||
+          name === "categoryId" ||
+          name === "status"
+              ? Number(value)
+              : value,
     }));
   };
 
   const handleUploadImage = async () => {
     const uploadedLinks: string[] = [];
     for (let i = 0; i < files.length; i++) {
-      console.log(files[i].FileList[0].file);
-      if (files[i]) {
+      if (files[i] && files[i][0]) {
         try {
-          const link = await submitData(
-            files[i].FileList[0].file,
-            files[i].FileList[0].file.name
-          );
-          uploadedLinks.push(link + "");
+          const link = await submitData(files[i][0], files[i][0].name);
+          uploadedLinks.push(link);
         } catch (error) {
           console.error("Error uploading file:", error);
         }
       }
     }
-    console.log(uploadedLinks);
-
     return uploadedLinks;
   };
 
@@ -308,137 +302,141 @@ const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
   };
 
   const handleChangeImg = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    console.log(e);
-
     const newFiles = [...files];
     newFiles[index] = e.target.files;
-    console.log(newFiles);
     setFiles(newFiles);
   };
 
   return (
-    <div className="fixed z-10 inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg w-1/2">
-        <h2 className="text-2xl mb-4">Add Product</h2>
-        <div>
-          <input type="file" onChange={(e) => handleChangeImg(e, 0)} />
-          <input type="file" onChange={(e) => handleChangeImg(e, 1)} />
-          <input type="file" onChange={(e) => handleChangeImg(e, 2)} />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Name
-          </label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Description
-          </label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Price
-          </label>
-          <input
-            type="number"
-            name="price"
-            value={formData.price}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Discount
-          </label>
-          <input
-            type="number"
-            name="discount"
-            value={formData.discount}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Quantity
-          </label>
-          <input
-            type="number"
-            name="quantity"
-            value={formData.quantity}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Sold
-          </label>
-          <input
-            type="number"
-            name="sold"
-            value={formData.sold}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Category ID
-          </label>
-          <input
-            type="number"
-            name="categoryId"
-            value={formData.categoryId}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Status
-          </label>
-          <input
-            type="number"
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-        <div className="flex justify-end">
-          <button
-            onClick={hide}
-            className="mr-2 bg-gray-300 text-gray-700 py-2 px-4 rounded-md"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-500 text-white py-2 px-4 rounded-md"
-          >
-            Save
-          </button>
+      <div className="fixed z-10 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="bg-white p-6 rounded-lg w-1/2 max-h-[80vh] overflow-y-auto">
+          <h2 className="text-2xl mb-4 font-bold">Add Product</h2>
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              {files.map((_, index) => (
+                  <input
+                      key={index}
+                      type="file"
+                      onChange={(e) => handleChangeImg(e, index)}
+                      className="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
+                  />
+              ))}
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Name
+              </label>
+              <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Description
+              </label>
+              <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+                  rows={4}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Price
+              </label>
+              <input
+                  type="number"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Discount
+              </label>
+              <input
+                  type="number"
+                  name="discount"
+                  value={formData.discount}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Quantity
+              </label>
+              <input
+                  type="number"
+                  name="quantity"
+                  value={formData.quantity}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Sold
+              </label>
+              <input
+                  type="number"
+                  name="sold"
+                  value={formData.sold}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Category ID
+              </label>
+              <input
+                  type="number"
+                  name="categoryId"
+                  value={formData.categoryId}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <input
+                  type="number"
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                  onClick={hide}
+                  className="bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+              <button
+                  onClick={handleSubmit}
+                  className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
+              >
+                Save
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
   );
 };
-
 const ManageDashboard: React.FC<ManageDashboardProps> = (props) => {
   const { subjectName, prouducts, updateList, onSearch } = props;
   const [showEdit, setShowEdit] = useState(false);
