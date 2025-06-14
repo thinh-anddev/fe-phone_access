@@ -366,7 +366,7 @@ const PaymentPage = () => {
             <div className="grid h-8 text-lg font-bold text-white rounded-full place-items-center aspect-square bg-primary">
               1
             </div>
-            <div className="text-lg font-bold">Thông tin người nhận</div>
+            <div className="text-lg font-bold">{t("user_info")}</div>
           </div>
           <div className="flex flex-col gap-4">
             <input
@@ -376,7 +376,7 @@ const PaymentPage = () => {
               }}
               type="text"
               className="w-full p-2 border rounded outline-primary border-line"
-              placeholder="Họ và tên*"
+              placeholder={t('full_name')+"*"}
             />
             <input
               value={phone}
@@ -385,7 +385,7 @@ const PaymentPage = () => {
               }}
               type="text"
               className="w-full p-2 border rounded outline-primary border-line"
-              placeholder="Số điện thoại*"
+              placeholder={t('phone') + '*'}
             />
             <input
               value={email}
@@ -403,9 +403,9 @@ const PaymentPage = () => {
                   selectTypeAddress == 2 && "bg-primary"
                 } py-1 flex-1 rounded border border-primary`}
               >
-                Địa chỉ mới
+                {t("new_address")}
               </button>
-              <p>hoặc</p>
+              <p>{t("or")}</p>
               <button
                 onClick={() => {
                   if (listAddress) {
@@ -417,7 +417,7 @@ const PaymentPage = () => {
                   selectTypeAddress == 1 && "bg-primary"
                 } py-1 flex-1  rounded border border-primary`}
               >
-                Địa chỉ có sẵn
+                {t("existing_address")}
               </button>
             </div>
             {selectTypeAddress == 1 &&
@@ -436,7 +436,7 @@ const PaymentPage = () => {
                   })}
                 </select>
               ) : (
-                <p>Bạn chưa có địa chỉ</p>
+                  <p>{t("no_address_yet")}</p>
               ))}
             {selectTypeAddress == 2 && (
               <>
@@ -445,7 +445,7 @@ const PaymentPage = () => {
                   onChange={(e) => onChangeProvince(e)}
                   className="w-full p-2 border rounded outline-primary border-line "
                 >
-                  <option value="">Tỉnh/Thành phố</option>
+                  <option value="">{t("province_city")}</option>
                   {listProvince?.map((province: any) => (
                     <option
                       key={province.ProvinceID}
@@ -460,7 +460,7 @@ const PaymentPage = () => {
                   onChange={(e) => onChangeDistrict(e)}
                   className="w-full p-2 border rounded outline-primary border-line "
                 >
-                  <option value="">Quận/Huyện</option>
+                  <option value="">{t("district")}</option>
                   {listDistrict?.map((district: any) => (
                     <option
                       key={district.DistrictID}
@@ -480,7 +480,7 @@ const PaymentPage = () => {
                   }}
                   className="w-full p-2 border rounded outline-primary border-line "
                 >
-                  <option value="">Phường/Xã</option>
+                  <option value="">{t("ward_commune")}</option>
                   {listWard?.map((ward: any) => (
                     <option key={ward.WardCode} value={ward.WardCode}>
                       {ward.WardName}
@@ -492,7 +492,7 @@ const PaymentPage = () => {
                   onChange={(e) => setSubAddtress(e.target.value)}
                   type="text"
                   className="w-full p-2 border rounded outline-primary border-line"
-                  placeholder="Số nhà, tên đường*"
+                  placeholder={t("street_house_number_required")}
                 />
               </>
             )}
@@ -502,7 +502,7 @@ const PaymentPage = () => {
               cols={5}
               rows={5}
               className="w-full p-2 border rounded outline-primary border-line"
-              placeholder="Ghi chú"
+              placeholder={t("note")}
             ></textarea>
           </div>
         </div>
@@ -511,7 +511,7 @@ const PaymentPage = () => {
             <div className="grid h-8 text-lg font-bold text-white rounded-full place-items-center aspect-square bg-primary">
               2
             </div>
-            <div className="text-lg font-bold">Hình thức thanh toán</div>
+            <div className="text-lg font-bold">{t("payment_method")}</div>
           </div>
           <div className="flex flex-col gap-4">
             <div
@@ -524,7 +524,7 @@ const PaymentPage = () => {
                 name="payment"
                 id="visa"
               />
-              <label htmlFor="visa">Thanh toán qua VNPay</label>
+              <label htmlFor="visa">{t("pay_with_vnpay")}</label>
             </div>
             <div
               onClick={() => setPayment(2)}
@@ -536,7 +536,7 @@ const PaymentPage = () => {
                 name="payment"
                 id="cod"
               />
-              <label htmlFor="cod">Thanh toán khi nhận hàng (COD)</label>
+              <label htmlFor="cod">{t("cod_payment")}</label>
             </div>
           </div>
         </div>
@@ -545,16 +545,16 @@ const PaymentPage = () => {
             <div className="grid h-8 text-lg font-bold text-white rounded-full place-items-center aspect-square bg-primary">
               3
             </div>
-            <div className="text-lg font-bold">Thông tin giỏ hàng</div>
+            <div className="text-lg font-bold">{t("cart_info")}</div>
           </div>
           <div className="w-full">
             <div>
               <table className="w-full">
                 <thead>
                   <tr>
-                    <th className="text-start">Sản phẩm</th>
-                    <th className="text-nowrap">Số lượng</th>
-                    <th>Tổng</th>
+                    <th className="text-start">{t("product")}</th>
+                    <th className="text-nowrap">{t("quantity")}</th>
+                    <th>{t("total")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -574,18 +574,18 @@ const PaymentPage = () => {
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex justify-between">
-                <div className="font-bold">Tạm tính</div>
+                <div className="font-bold">{t("provisional")}</div>
                 <div>{totalOrder}đ</div>
               </div>
               <div className="flex justify-between">
-                <div className="font-bold">Phí vận chuyển</div>
+                <div className="font-bold">{t("shipping_fee")}</div>
                 <div>{shippingFee}đ</div>
               </div>
               <p className="w-full text-end">
-                Bạn đang có {user?.point} điểm tích lũy
+                {t("you_have_points", { points: user?.point })}
               </p>
               <div className="flex justify-between items-center">
-                <div className="font-bold">Dùng điểm tích lũy</div>
+                <div className="font-bold">{t("use_reward_points")}</div>
 
                 <div className="flex flex-col items-end gap-2">
                   <input
@@ -594,7 +594,7 @@ const PaymentPage = () => {
                     inputMode="numeric"
                     pattern="[0-9]"
                     className="p-2 w-32 border rounded outline-primary border-line"
-                    placeholder={`Bạn đang có ${user?.point} điểm`}
+                    placeholder={t("you_have_points_input", { points: user?.point })}
                     onKeyDown={(event) => {
                       const charCode = event.which
                         ? event.which
@@ -615,13 +615,13 @@ const PaymentPage = () => {
                     onClick={handleApplyDiscount}
                     className="px-4 py-1 text-base font-bold duration-300 border-2 border-solid rounded-full w-fit border-primary text-primary hover:bg-purple-500 hover:text-white"
                   >
-                    Sử dụng
+                    {t("apply")}
                   </button>
                 </div>
               </div>
 
               <div className="flex justify-between text-3xl font-bold">
-                <div>Tổng cộng</div>
+                <div>{t("total")}</div>
                 <div className="text-primary">{totalOrder + shippingFee}đ</div>
               </div>
             </div>
@@ -633,7 +633,7 @@ const PaymentPage = () => {
               onClick={() => !loadingPaying && handleSubmit()}
               className="hover:text-white transition-all hover:bg-primary mt-10 text-[30px] px-4 py1 rounded-2xl border-primary border-2 text-primary"
             >
-              Đặt hàng
+              {t('place_order')}
             </Button>
           </div>
         </div>

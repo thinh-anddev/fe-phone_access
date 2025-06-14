@@ -6,13 +6,14 @@ import { getCarts, insertNewCartDetail } from "@/pages/Cart/api";
 import { getUserFromSession } from "@/utils/User";
 import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
 import Comments from "./Comments";
+import { useTranslation } from "react-i18next";
 
 interface ProductProps {
   product: ProductType;
 }
 
-const InfoProduct: React.FC<ProductProps> = (props) => {
-  const { product } = props;
+const InfoProduct: React.FC<ProductProps> = ({ product }) => {
+  const { t } = useTranslation();
   const [quantity, setQuantity] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const toast = useContext(ToastContext);
@@ -22,24 +23,25 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
 
   useEffect(() => {
     if (user) {
-      getCarts().then((res) => {
-        setCarts(res.data);
-      });
+      getCarts().then((res) => setCarts(res.data));
     } else {
-      toast.showToast("Vui lòng đăng nhập để xem giỏ hàng");
+      toast.showToast(t("please_login_to_view_cart"));
     }
   }, []);
 
   const addToCart = async (cartDetail: any) => {
-    if (phoneCatIdeSelected == 0 && product.productPhoneCategories.length > 0) {
-      toast.showToast("Vui lòng chọn phân loại sản phẩm");
+    if (phoneCatIdeSelected === 0 && product.productPhoneCategories.length > 0) {
+      toast.showToast(t("please_select_product_variant"));
       return;
     }
 
     const response = await insertNewCartDetail(cartDetail);
-    response.success && toast.showToast("Thêm vào giỏ hàng thành công");
-    response.success && setCarts([...carts, response.data]);
-    !response.success && toast.showToast("Thêm vào giỏ hàng thất bại");
+    if (response.success) {
+      toast.showToast(t("add_to_cart_success"));
+      setCarts([...carts, response.data]);
+    } else {
+      toast.showToast(t("add_to_cart_failed"));
+    }
   };
 
   const handleAddToCart = () => {
@@ -49,14 +51,14 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
           Number.parseInt(cartQuantity || "0") + quantity
       ).toString();
       const cartDetail = {
-        productId: product?.id,
+        productId: product.id,
         phoneCategoryId: phoneCatIdeSelected,
         customerId: user.id,
         quantity: quantity,
       };
       addToCart(cartDetail);
     } else {
-      toast.showToast("Vui lòng đăng nhập để thêm vào giỏ hàng");
+      toast.showToast(t("please_login_to_add_to_cart"));
     }
   };
 
@@ -126,35 +128,30 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
           </div>
         </div>
         <div className="flex flex-col flex-1 gap-y-8">
-          <div>
-            <p className="text-[25px] font-extrabold">{product.name}</p>
-          </div>
+          <p className="text-[25px] font-extrabold">{product.name}</p>
           <p className="text-[25px] font-extrabold text-purple-600">
             {formatPrice(product.price)}
           </p>
           <div className="flex gap-x-4">
-            <p className="text-lg font-medium">Phân loại</p>
+            <p className="text-lg font-medium">{t("category")}</p>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-              {uniquePhoneCategories &&
-                  uniquePhoneCategories.map((phCate) => (
-                      <p
-                          onClick={() =>
-                              handleSelectPhoneCategory(phCate.phoneCategory.id)
-                          }
-                          key={phCate.phoneCategory.id}
-                          className={`max-w-[150px] px-2 py-1 text-center border rounded cursor-pointer text-md opacity-80 hover:bg-purple-100 transition ${
-                              phoneCatIdeSelected === phCate.phoneCategory.id
-                                  ? "bg-purple-200 border-purple-500"
-                                  : "border-gray-300"
-                          } truncate`}
-                      >
-                        {phCate.phoneCategory.name}
-                      </p>
-                  ))}
+              {uniquePhoneCategories.map((phCate) => (
+                  <p
+                      onClick={() => handleSelectPhoneCategory(phCate.phoneCategory.id)}
+                      key={phCate.phoneCategory.id}
+                      className={`max-w-[150px] px-2 py-1 text-center border rounded cursor-pointer text-md opacity-80 hover:bg-purple-100 transition ${
+                          phoneCatIdeSelected === phCate.phoneCategory.id
+                              ? "bg-purple-200 border-purple-500"
+                              : "border-gray-300"
+                      } truncate`}
+                  >
+                    {phCate.phoneCategory.name}
+                  </p>
+              ))}
             </div>
           </div>
           <div className="flex items-center gap-x-4">
-            <p className="text-lg font-medium">Số lượng</p>
+            <p className="text-lg font-medium">{t("quantity")}</p>
             <UpdateQuantity
                 productQuantity={product.quantity}
                 quantity={quantity}
@@ -162,18 +159,18 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
             />
           </div>
           <div className="flex items-center gap-x-4 text-gray-600">
-            <p className="font-medium">Còn lại</p>
-            <p>{product?.quantity}</p>
+            <p className="font-medium">{t("in_stock")}</p>
+            <p>{product.quantity}</p>
           </div>
           <div className="flex gap-4">
             <button
-                onClick={() => handleAddToCart()}
+                onClick={handleAddToCart}
                 className="flex-1 py-3 rounded bg-purple-300 hover:bg-purple-400 text-white font-medium transition"
             >
-              Thêm vào giỏ hàng
+              {t("add_to_cart")}
             </button>
             <button className="flex-1 py-3 rounded bg-purple-500 hover:bg-purple-600 text-white font-medium transition">
-              Mua ngay
+              {t("buy_now")}
             </button>
           </div>
           <Comments productId={product.id} />
