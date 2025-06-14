@@ -6,11 +6,13 @@ import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
 import addProduct from "../../api/addProduct";
 import { submitData } from "@/api/PinFileToIpfs";
 import deleteProduct from "../../api/deleteProdct";
+import {ProductType} from "@/utils/models.ts";
 
 interface ManageDashboardProps {
   subjectName: string;
-  prouducts: any;
+  prouducts: ProductType[];
   updateList: () => void;
+  onSearch: (name: string) => void;
 }
 interface RowProps {
   item: any;
@@ -438,68 +440,80 @@ const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
 };
 
 const ManageDashboard: React.FC<ManageDashboardProps> = (props) => {
-  const { subjectName, prouducts, updateList } = props;
+  const { subjectName, prouducts, updateList, onSearch } = props;
   const [showEdit, setShowEdit] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
-  const [editingProduct, setEditingProduct] = useState();
+  const [editingProduct, setEditingProduct] = useState<ProductType | undefined>();
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      onSearch(searchTerm.trim());
+    }
+  };
 
   return (
-    <div className="flex flex-col w-full gap-2 p-6 m-2 rounded shadow-sm">
-      {showEdit && (
-        <FormEdit
-          item={editingProduct}
-          hide={() => setShowEdit(false)}
-          updateList={updateList}
-        />
-      )}
-      {showAdd && <FormAdd hide={() => setShowAdd(false)} />}
-      <div className="text-[25px]">{"Quản lý " + subjectName}</div>
-      <div className="flex items-center justify-end gap-2">
-        <input
-          type="search"
-          className="px-4 py-2 mx-2 text-base border border-black rounded outline-none h-fit opacity-80"
-          placeholder="Tìm kiếm..."
-        />
-        <button
-          onClick={() => setShowAdd(true)}
-          className="focus:outline-none text-white bg-primary hover:bg-purple-800  font-medium rounded-lg text-base px-4 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-300"
-        >
-          Thêm
-        </button>
-      </div>
-      <div className="flex flex-col gap-3">
-        <table>
-          <tr>
-            <th className="px-4 w-20"></th>
-            <th className="px-4 w-40">Tên</th>
-            <th className="px-4 w-10">Giá</th>
-            <th className="px-4">Mô tả</th>
-            <th className="px-4 w-10">Số lượng</th>
-            <th className="px-4 w-10">Đã bán</th>
-            <th className="px-4 w-10">Trạng thái</th>
-            <th></th>
-            <th></th>
-          </tr>
-
-          {prouducts.map((item: any, index: number) => {
-            return (
-              <Row
-                key={index}
-                item={item}
-                setShowEdit={setShowEdit}
-                setEditingProduct={setEditingProduct}
+      <div className="flex flex-col w-full gap-2 p-6 m-2 rounded shadow-sm">
+        {showEdit && (
+            <FormEdit
+                item={editingProduct}
+                hide={() => setShowEdit(false)}
                 updateList={updateList}
-              />
-            );
-          })}
-        </table>
-        <div className="grid grid-cols-12 pb-2 border-b border-black text-nowrap opacity-80 ">
-          <input type="checkbox" className="w-6 col-span-1" />
-
-          <div className="flex col-span-1 gap-2 text-xl"></div>
+            />
+        )}
+        {showAdd && <FormAdd hide={() => setShowAdd(false)} />}
+        <div className="text-[25px]">{"Quản lý " + subjectName}</div>
+        <div className="flex items-center justify-end gap-2">
+          <input
+              type="search"
+              className="px-4 py-2 mx-2 text-base border border-black rounded outline-none h-fit opacity-80"
+              placeholder="Tìm kiếm..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleSearchKeyPress}
+          />
+          <button
+              onClick={() => setShowAdd(true)}
+              className="focus:outline-none text-white bg-primary hover:bg-purple-800 font-medium rounded-lg text-base px-4 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-300"
+          >
+            Thêm
+          </button>
+        </div>
+        <div className="flex flex-col gap-3">
+          <table>
+            <thead>
+            <tr>
+              <th className="px-4 w-20"></th>
+              <th className="px-4 w-40">Tên</th>
+              <th className="px-4 w-10">Giá</th>
+              <th className="px-4">Mô tả</th>
+              <th className="px-4 w-10">Số lượng</th>
+              <th className="px-4 w-10">Đã bán</th>
+              <th className="px-4 w-10">Trạng thái</th>
+              <th></th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {prouducts.map((item: ProductType) => {
+              return (
+                  <Row
+                      key={item.id}
+                      item={item}
+                      setShowEdit={setShowEdit}
+                      setEditingProduct={setEditingProduct}
+                      updateList={updateList}
+                  />
+              );
+            })}
+            </tbody>
+          </table>
+          <div className="grid grid-cols-12 pb-2 border-b border-black text-nowrap opacity-80">
+            <input type="checkbox" className="w-6 col-span-1" />
+            <div className="flex col-span-1 gap-2 text-xl"></div>
+          </div>
         </div>
       </div>
-    </div>
   );
 };
 export default ManageDashboard;
