@@ -5,14 +5,16 @@ import { formatPrice } from "@/utils";
 import { getCarts, insertNewCartDetail } from "@/pages/Cart/api";
 import { getUserFromSession } from "@/utils/User";
 import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
+import Comments from "./Comments";
 
 interface ProductProps {
   product: ProductType;
 }
+
 const InfoProduct: React.FC<ProductProps> = (props) => {
   const { product } = props;
   const [quantity, setQuantity] = useState(1);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0); // State để quản lý hình ảnh hiện tại
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const toast = useContext(ToastContext);
   const [carts, setCarts] = useState<CartDetailType[]>([]);
   const [phoneCatIdeSelected, setPhoneCateIdSelected] = useState<number>(0);
@@ -28,8 +30,6 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
     }
   }, []);
 
-  // add products to cart
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const addToCart = async (cartDetail: any) => {
     if (phoneCatIdeSelected == 0 && product.productPhoneCategories.length > 0) {
       toast.showToast("Vui lòng chọn phân loại sản phẩm");
@@ -64,7 +64,6 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
     setPhoneCateIdSelected(phoneCateId);
   };
 
-  // Thêm đoạn code xử lý trùng lặp ở đây
   const uniquePhoneCategories = Array.from(
       new Map(
           product.productPhoneCategories?.map((phCate) => [
@@ -74,14 +73,12 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
       ).values()
   );
 
-  // Chuyển đến hình ảnh trước
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) =>
         prev === 0 ? product.images.length - 1 : prev - 1
     );
   };
 
-  // Chuyển đến hình ảnh tiếp theo
   const handleNextImage = () => {
     setCurrentImageIndex((prev) =>
         prev === product.images.length - 1 ? 0 : prev + 1
@@ -91,7 +88,6 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
   return (
       <div className="flex gap-4">
         <div className="flex-1 max-w-[50%]">
-          {/* Hình ảnh lớn với nút điều hướng */}
           <div className="relative">
             <img
                 src={product.images && product.images[currentImageIndex].url}
@@ -100,13 +96,13 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
             />
             <button
                 onClick={handlePrevImage}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-900 transition"
             >
               &lt;
             </button>
             <button
                 onClick={handleNextImage}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-900 transition"
             >
               &gt;
             </button>
@@ -114,7 +110,9 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
           <div className="flex justify-center max-w-full mt-4 overflow-auto gap-x-4">
             {product.images?.map((image, index) => (
                 <div
-                    className="h-[105px] aspect-square cursor-pointer border-2 border-transparent hover:border-purple-300"
+                    className={`h-[105px] aspect-square cursor-pointer border-2 ${
+                        currentImageIndex === index ? "border-purple-500" : "border-transparent"
+                    } hover:border-purple-300 transition`}
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
                 >
@@ -131,11 +129,11 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
           <div>
             <p className="text-[25px] font-extrabold">{product.name}</p>
           </div>
-          <p className="text-[25px] font-extrabold">
+          <p className="text-[25px] font-extrabold text-purple-600">
             {formatPrice(product.price)}
           </p>
           <div className="flex gap-x-4">
-            <p className="text-lg">Phân loại</p>
+            <p className="text-lg font-medium">Phân loại</p>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {uniquePhoneCategories &&
                   uniquePhoneCategories.map((phCate) => (
@@ -144,11 +142,11 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
                               handleSelectPhoneCategory(phCate.phoneCategory.id)
                           }
                           key={phCate.phoneCategory.id}
-                          className={`${
+                          className={`max-w-[150px] px-2 py-1 text-center border rounded cursor-pointer text-md opacity-80 hover:bg-purple-100 transition ${
                               phoneCatIdeSelected === phCate.phoneCategory.id
-                                  ? "bg-primary"
-                                  : ""
-                          } pw-full max-w-[150px] px-2 py-1 text-center text-black border rounded cursor-pointer text-md opacity-80 hover:bg-primary border-stroke truncate overflow-hidden text-ellipsis whitespace-nowrap`}
+                                  ? "bg-purple-200 border-purple-500"
+                                  : "border-gray-300"
+                          } truncate`}
                       >
                         {phCate.phoneCategory.name}
                       </p>
@@ -156,28 +154,29 @@ const InfoProduct: React.FC<ProductProps> = (props) => {
             </div>
           </div>
           <div className="flex items-center gap-x-4">
-            <p className="text-lg">Số lượng</p>
+            <p className="text-lg font-medium">Số lượng</p>
             <UpdateQuantity
                 productQuantity={product.quantity}
                 quantity={quantity}
                 setQuantity={setQuantity}
             />
           </div>
-          <div className="flex items-center opacity-80 gap-x-4">
-            <p className="">Còn lại</p>
+          <div className="flex items-center gap-x-4 text-gray-600">
+            <p className="font-medium">Còn lại</p>
             <p>{product?.quantity}</p>
           </div>
           <div className="flex gap-4">
             <button
                 onClick={() => handleAddToCart()}
-                className="flex-1 py-3 rounded bg-purple-300 hover:brightness-110"
+                className="flex-1 py-3 rounded bg-purple-300 hover:bg-purple-400 text-white font-medium transition"
             >
               Thêm vào giỏ hàng
             </button>
-            <button className="flex-1 py-3 rounded bg-purple-300 hover:brightness-110">
+            <button className="flex-1 py-3 rounded bg-purple-500 hover:bg-purple-600 text-white font-medium transition">
               Mua ngay
             </button>
           </div>
+          <Comments productId={product.id} />
         </div>
       </div>
   );

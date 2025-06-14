@@ -11,10 +11,10 @@ interface TranslationResources {
 
 const resources = {
     en: {
-        translation: enTranslation as TranslationResources,
+        translation: enTranslation as unknown as TranslationResources,
     },
     vi: {
-        translation: viTranslation as TranslationResources,
+        translation: viTranslation as unknown as TranslationResources,
     },
 };
 const savedLanguage = localStorage.getItem('language')|| 'vi';
