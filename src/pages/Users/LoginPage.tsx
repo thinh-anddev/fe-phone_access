@@ -18,7 +18,7 @@ const Login = () => {
       setUser(res.user);
       if(res.user.role==1){
           navigate("/admin_dashboard");
-          window.location.reload();
+          // window.location.reload();
       }
       else navigate("/");
       showToast("Login successfully!");
