@@ -17,16 +17,17 @@ const AdminDashboard = () => {
     navigate(link);
   }
 
-  // Kiểm tra và khôi phục user từ sessionStorage khi component mount
   useEffect(() => {
-    const userSession = getUserFromSession();
+    const userSession: any | null = getUserFromSession();
     if (userSession) {
       setUser(userSession);
+      if (userSession.role !== 1) {
+        navigate("/");
+      }
     } else {
-      navigate("/user"); // Điều hướng về trang đăng nhập nếu không có user
+      navigate("/user");
     }
   }, [setUser, navigate]);
-
   const tabs = [
     "Báo cáo thu nhập",
     "Quản lý sản phẩm",
