@@ -43,7 +43,7 @@ export const setAdminRole = async (userId: number) => {
 export const deleteUser = async (userId: number) => {
     try {
         const response = await axios.delete(
-            `${import.meta.env.VITE_API_END_POINT}/customers/delete?id=${userId}`,
+            `${import.meta.env.VITE_API_END_POINT}/customers/delete/${userId}`,
             { headers: getAuthHeader() }
         );
         if (response.data.status === "ok") {
@@ -55,3 +55,25 @@ export const deleteUser = async (userId: number) => {
         return { success: false, message: error.message };
     }
 };
+export const updateUserRole = async (userId: number, role: number) => {
+    try {
+        const response = await axios.put(
+            `${import.meta.env.VITE_API_END_POINT}/customers/updateRole`,
+            {
+                id: userId,
+                role: role,
+            },
+            {
+                headers: getAuthHeader(),
+            }
+        );
+        if (response.data.status === "ok") {
+            return { success: true };
+        } else {
+            return { success: false, message: "Cập nhật quyền thất bại" };
+        }
+    } catch (error: any) {
+        return { success: false, message: error.message };
+    }
+};
+

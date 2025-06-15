@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import { FaUserShield } from "react-icons/fa";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
-import { getAllAccounts, setAdminRole, deleteUser } from "@/api/User";
+import { getAllAccounts, updateUserRole, deleteUser } from "@/api/User";
 import { CustomerType } from "@/utils/models";
 
 const AccountsManagePage = () => {
@@ -14,19 +14,25 @@ const AccountsManagePage = () => {
     if (response.success) setAccounts(response.users);
   };
 
-  const handleSetAdmin = async (userId: number) => {
-    const response = await setAdminRole(userId);
+  const handleUpdateRole = async (userId: number, currentRole: number) => {
+    const newRole = currentRole === 1 ? 0 : 1;
+
+    const response = await updateUserRole(userId, newRole);
     if (response.success) {
-      toast.showToast("Cập nhật quyền admin thành công");
+      toast.showToast("Cập nhật vai trò người dùng thành công");
       fetchUsers();
+    } else {
+      toast.showToast("Cập nhật role thất bại");
     }
   };
 
   const handleDeleteUser = async (userId: number) => {
     const response = await deleteUser(userId);
-    if (response.success) {
+    if (response.message==="ok") {
       toast.showToast("Xoá người dùng thành công");
       fetchUsers();
+    }else{
+      toast.showToast("zzzzz");
     }
   };
 
@@ -63,17 +69,15 @@ const AccountsManagePage = () => {
                           : "bg-gray-200 text-gray-700"
                   }`}
               >
-                {user.role}
-              </span>
+  {user.role === 1 ? "Admin" : "User"}
+</span>
                 </div>
                 <div className="flex items-center justify-center gap-3 col-span-2 text-xl">
-                  {user.role !== 1 && (
-                      <FaUserShield
-                          className="cursor-pointer hover:text-primary"
-                          title="Set Admin"
-                          onClick={() => handleSetAdmin(user.id)}
-                      />
-                  )}
+                  <FaUserShield
+                      className="cursor-pointer hover:text-primary"
+                      title="Set Admin"
+                      onClick={() => handleUpdateRole(user.id, user.role)}
+                  />
                   <RiDeleteBin5Line
                       className="cursor-pointer hover:text-red-500"
                       title="Xoá người dùng"
