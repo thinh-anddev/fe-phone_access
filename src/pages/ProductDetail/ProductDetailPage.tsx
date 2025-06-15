@@ -3,10 +3,12 @@ import { detailProduct } from "./api/detailProduct";
 import InfoProduct from "./components/InfoProduct";
 import { useEffect, useState } from "react";
 import { ProductType } from "@/utils/models";
+import { useTranslation } from "react-i18next";
 
 const ProductDetailPage = () => {
   const params = useParams();
   const [product, setProduct] = useState<ProductType>({} as ProductType);
+  const { t } = useTranslation();
 
   const getProduct = async () => {
     try {
@@ -15,7 +17,7 @@ const ProductDetailPage = () => {
         setProduct(response.product);
       }
     } catch (error) {
-      console.error("Failed to fetch product:", error);
+      console.error(t("product_detail.error_fetch"), error);
     }
   };
 
