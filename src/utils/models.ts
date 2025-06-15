@@ -82,3 +82,4 @@ export type OrderDetailType = {
   product: ProductType;
   phoneCategory: PhoneCategoryType;
 };
+

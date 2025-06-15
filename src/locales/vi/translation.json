@@ -114,7 +114,9 @@
     "add_to_cart": "Thêm vào giỏ hàng",
     "buy_now": "Mua ngay",
     "product_not_found": "Không tìm thấy sản phẩm này",
-    "something_went_wrong": "Đã có lỗi xảy ra"
+    "something_went_wrong": "Đã có lỗi xảy ra",
+    "error_fetch": "Lấy thông tin sản phẩm thất bại",
+    "user_info": "Thông tin người nhận"
 
 
 }
