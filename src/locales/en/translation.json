@@ -114,5 +114,13 @@
     "add_to_cart": "Add to Cart",
     "buy_now": "Buy Now",
     "product_not_found": "Product not found",
-    "something_went_wrong": "Something went wrong"
+    "something_went_wrong": "Something went wrong",
+    "home": "Home",
+    "products": "Products",
+    "contact": "Contact",
+    "policy": "Return Policy",
+    "login": "Login",
+    "cart_login_required": "Please log in to view your cart",
+    "search_placeholder": "Search ...",
+    "view_all": "View all"
 }
