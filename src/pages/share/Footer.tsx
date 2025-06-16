@@ -1,34 +1,31 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "@/assets/image-common/logo.png";
+import { useTranslation } from "react-i18next";
 
 const Footer = () => {
-    const links = ["Trang chủ", "Sản Phẩm", "Liên hệ", "Chính sách đổi trả"];
+    const { t } = useTranslation();
     const urlPaths = ["", "products", "contact", "policy"];
     const pathname = useLocation().pathname;
-    const [activeLink, setActiveLink] = useState(links[0]);
+    const [activeIndex, setActiveIndex] = useState(0);
     const navigate = useNavigate();
 
-    const handleClickLink = ({index}: { index: any }) => {
-        setActiveLink(links[index]);
+    const handleClickLink = (index: number) => {
+        setActiveIndex(index);
         navigate(`/${urlPaths[index]}`);
     };
 
     useEffect(() => {
-        if (pathname === "/") {
-            return setActiveLink(links[0]);
-        }
-        if (pathname === "/products") {
-            return setActiveLink(links[1]);
-        }
-        if (pathname === "/contact") {
-            return setActiveLink(links[2]);
-        }
-        if (pathname === "/policy") {
-            return setActiveLink(links[3]);
-        }
-        setActiveLink("");
+        const index = urlPaths.findIndex((path) => pathname === "/" + path || (path === "" && pathname === "/"));
+        setActiveIndex(index !== -1 ? index : -1);
     }, [pathname]);
+
+    const translatedLinks = [
+        t("home"),
+        t("products"),
+        t("contact"),
+        t("policy"),
+    ];
 
     return (
         <div className="w-full bg-purple-500 text-black font-bold p-4">
@@ -38,28 +35,28 @@ const Footer = () => {
                 </div>
                 <div className="w-2/3 flex justify-around">
                     <div className="flex flex-col gap-2">
-                        {links.slice(0, 2).map((link, index) => (
+                        {[0, 1].map((index) => (
                             <div
-                                key={link}
-                                onClick={() => handleClickLink({index: index})}
+                                key={index}
+                                onClick={() => handleClickLink(index)}
                                 className={`${
-                                    activeLink === link ? "" : "opacity-70"
+                                    activeIndex === index ? "" : "opacity-70"
                                 } cursor-pointer text-stroke hover:text-opacity-70 transition-opacity`}
                             >
-                                <p>{link}</p>
+                                <p>{translatedLinks[index]}</p>
                             </div>
                         ))}
                     </div>
                     <div className="flex flex-col gap-2">
-                        {links.slice(2, 4).map((link, index) => (
+                        {[2, 3].map((index) => (
                             <div
-                                key={link}
-                                onClick={() => handleClickLink({index: index + 2})}
+                                key={index}
+                                onClick={() => handleClickLink(index)}
                                 className={`${
-                                    activeLink === link ? "" : "opacity-70"
+                                    activeIndex === index ? "" : "opacity-70"
                                 } cursor-pointer text-stroke hover:text-opacity-70 transition-opacity`}
                             >
-                                <p>{link}</p>
+                                <p>{translatedLinks[index]}</p>
                             </div>
                         ))}
                     </div>

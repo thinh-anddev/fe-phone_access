@@ -17,7 +17,7 @@ const Header = () => {
   const navigate = useNavigate();
   const toast = useContext(ToastContext);
   const url = window.location.href;
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   // Khởi tạo selectedLanguage dựa trên localStorage
   const languages = [
@@ -66,8 +66,7 @@ const Header = () => {
     if (user) {
       navigateTo("/cart");
     } else {
-      toast.showToast("Vui lòng đăng nhập để xem giỏ hàng");
-    }
+      toast.showToast(t("cart_login_required"));    }
   };
 
   const handleLanguageChange = (lng) => {
@@ -164,14 +163,14 @@ const Header = () => {
                         onClick={logout}
                         className="transition-all cursor-pointer hover:text-primary"
                     >
-                      Thoát
+                      {t("logout")}
                     </div>
                 ) : (
                     <div
                         onClick={() => navigateTo("/user")}
                         className="transition-all cursor-pointer hover:text-primary"
                     >
-                      Đăng nhập
+                      {t("login")}
                     </div>
                 )}
               </div>

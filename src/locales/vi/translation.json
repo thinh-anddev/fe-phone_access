@@ -116,7 +116,15 @@
     "product_not_found": "Không tìm thấy sản phẩm này",
     "something_went_wrong": "Đã có lỗi xảy ra",
     "error_fetch": "Lấy thông tin sản phẩm thất bại",
-    "user_info": "Thông tin người nhận"
+    "user_info": "Thông tin người nhận",
+    "home": "Trang chủ",
+    "products": "Sản phẩm",
+    "contact": "Liên hệ",
+    "policy": "Chính sách đổi trả",
+    "login": "Đăng nhập",
+    "cart_login_required": "Vui lòng đăng nhập để xem giỏ hàng",
+    "search_placeholder": "Tìm kiếm ...",
+    "view_all": "Xem tất cả"
 
 
 }
