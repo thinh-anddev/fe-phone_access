@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext, ChangeEvent } from "react";
 import { LoginContext } from "@/hooks/LoginStatus/LoginContext";
 import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
+import { addComment, getCommentsByProduct } from "../api/comments";
 
-// Định nghĩa interface cho Comment
 interface Comment {
     id: number;
     productId: number;
@@ -11,60 +11,33 @@ interface Comment {
     createdAt: string;
 }
 
+interface PageResponse {
+    content: Comment[];
+    totalPages: number;
+    number: number;
+}
+
 interface CommentsProps {
     productId: number;
 }
-
-// API giả để lấy danh sách bình luận
-const getComments = async (productId: number): Promise<{ success: boolean; comments: Comment[] }> => {
-    const defaultComments: Comment[] = [
-        {
-            id: 1,
-            productId,
-            username: "Khách 1",
-            content: "Sản phẩm chất lượng, rất đáng mua!",
-            createdAt: new Date().toISOString(),
-        },
-        {
-            id: 2,
-            productId,
-            username: "Khách 2",
-            content: "Giao hàng nhanh, đóng gói cẩn thận.",
-            createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-        },
-    ];
-    return { success: true, comments: defaultComments };
-};
-
-// API giả để thêm bình luận
-const addComment = async (
-    productId: number,
-    username: string,
-    content: string
-): Promise<{ success: boolean; comment: Comment }> => {
-    const newComment: Comment = {
-        id: Math.floor(Math.random() * 1000) + 3,
-        productId,
-        username,
-        content,
-        createdAt: new Date().toISOString(),
-    };
-    return { success: true, comment: newComment };
-};
 
 const Comments: React.FC<CommentsProps> = ({ productId }) => {
     const { user } = useContext(LoginContext);
     const { showToast } = useContext(ToastContext);
     const [comments, setComments] = useState<Comment[]>([]);
     const [newComment, setNewComment] = useState<string>("");
+    const [page, setPage] = useState<number>(0);
+    const [totalPages, setTotalPages] = useState<number>(0);
 
     const fetchComments = async () => {
         try {
-            const response = await getComments(productId);
+            console.log(productId);
+
+            const response = await getCommentsByProduct(productId, page);
             if (response.success) {
-                setComments(response.comments);
+                setComments(response.data.content);
+                setTotalPages(response.data.totalPages);
             } else {
-                showToast("Không thể tải bình luận!");
             }
         } catch (error) {
             showToast("Lỗi khi tải bình luận!");
@@ -73,7 +46,7 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
 
     useEffect(() => {
         fetchComments();
-    }, [productId]);
+    }, [productId, page]);
 
     const handleSubmitComment = async () => {
         if (!user) {
@@ -86,13 +59,13 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
         }
 
         try {
-            const response = await addComment(productId, user.username, newComment.trim());
+            const response = await addComment(productId, newComment.trim());
             if (response.success) {
-                setComments([response.comment, ...comments]);
+                setComments([response.data, ...comments]);
                 setNewComment("");
                 showToast("Bình luận đã được gửi!");
             } else {
-                showToast("Không thể gửi bình luận!");
+                showToast(response.message);
             }
         } catch (error) {
             showToast("Lỗi khi gửi bình luận!");
@@ -103,18 +76,24 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
         setNewComment(e.target.value);
     };
 
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 0 && newPage < totalPages) {
+            setPage(newPage);
+        }
+    };
+
     return (
         <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-xl font-semibold mb-4">Bình luận</h3>
             {user ? (
                 <div className="mb-6">
-          <textarea
-              value={newComment}
-              onChange={handleChange}
-              placeholder="Viết bình luận của bạn..."
-              className="w-full p-3 border border-gray-300 rounded-md resize-y focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
-              rows={4}
-          />
+                    <textarea
+                        value={newComment}
+                        onChange={handleChange}
+                        placeholder="Viết bình luận của bạn..."
+                        className="w-full p-3 border border-gray-300 rounded-md resize-y focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
+                        rows={4}
+                    />
                     <button
                         onClick={handleSubmitComment}
                         className="mt-2 bg-purple-500 text-white py-2 px-4 rounded-md hover:bg-purple-600 transition"
@@ -140,8 +119,8 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
                                 <div className="flex justify-between items-center mb-1">
                                     <span className="font-semibold text-gray-800">{comment.username}</span>
                                     <span className="text-sm text-gray-500">
-                    {new Date(comment.createdAt).toLocaleString()}
-                  </span>
+                                        {new Date(comment.createdAt).toLocaleString()}
+                                    </span>
                                 </div>
                                 <p className="text-gray-700">{comment.content}</p>
                             </div>
@@ -149,6 +128,34 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
                     ))
                 )}
             </div>
+            {totalPages > 1 && (
+                <div className="flex justify-center mt-4">
+                    <button
+                        onClick={() => handlePageChange(page - 1)}
+                        disabled={page === 0}
+                        className="mx-1 px-3 py-1 bg-gray-200 rounded-md disabled:opacity-50"
+                    >
+                        Trước
+                    </button>
+                    {[...Array(totalPages)].map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => handlePageChange(index)}
+                            className={`mx-1 px-3 py-1 rounded-md ${page === index ? "bg-purple-500 text-white" : "bg-gray-200"
+                                }`}
+                        >
+                            {index + 1}
+                        </button>
+                    ))}
+                    <button
+                        onClick={() => handlePageChange(page + 1)}
+                        disabled={page === totalPages - 1}
+                        className="mx-1 px-3 py-1 bg-gray-200 rounded-md disabled:opacity-50"
+                    >
+                        Sau
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
