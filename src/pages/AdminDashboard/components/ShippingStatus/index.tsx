@@ -48,7 +48,7 @@ const ShippingStatusComp: React.FC<ShippingStatusProps> = (props) => {
         </p>
       )}
       {status === ShippingStatus.SUCCESS && (
-        <p className="p-1 mx-auto bg-green-700 w-fit rounded-2xl">
+        <p className="p-1 mx-auto bg-green-700 w-fit rounded-2xl text-sm font-medium">
           {ShippingLabel.SUCCESS}
         </p>
       )}
