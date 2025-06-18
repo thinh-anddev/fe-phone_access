@@ -1,20 +1,92 @@
-import React, { FormEvent } from "react";
+import React, { FormEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
-
+import addContact from "./api/addContact";
 
 const ContactPage: React.FC = () => {
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        // Xử lý submit form ở đây (ví dụ gửi API)
-        alert("Gửi liên hệ thành công!");
-    };
     const { t } = useTranslation();
+    const [formData, setFormData] = useState({
+        fullName: "",
+        email: "",
+        content: "",
+    });
+    const [errors, setErrors] = useState({
+        fullName: "",
+        email: "",
+        content: "",
+    });
+
+    const validateFullName = (value: string) => {
+        if (!value.trim()) {
+            return "Họ tên không được để trống";
+        }
+        if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(value)) {
+            return "Họ tên chỉ được chứa chữ cái và khoảng trắng";
+        }
+        return "";
+    };
+
+    const validateEmail = (value: string) => {
+        if (!value.trim()) {
+            return "Email không được để trống";
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+            return "Email không đúng định dạng";
+        }
+        return "";
+    };
+
+    const validateContent = (value: string) => {
+        if (!value.trim()) {
+            return "Nội dung không được để trống";
+        }
+        return "";
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        let error = "";
+        if (name === "fullName") {
+            error = validateFullName(value);
+        } else if (name === "email") {
+            error = validateEmail(value);
+        } else if (name === "content") {
+            error = validateContent(value);
+        }
+        setErrors((prev) => ({ ...prev, [name]: error }));
+    };
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+
+        const fullNameError = validateFullName(formData.fullName);
+        const emailError = validateEmail(formData.email);
+        const contentError = validateContent(formData.content);
+
+        setErrors({
+            fullName: fullNameError,
+            email: emailError,
+            content: contentError,
+        });
+
+        if (!fullNameError && !emailError && !contentError) {
+            const result = await addContact(formData);
+            console.log(result);
+
+            // if(result.status == )
+            alert(result.message);
+            setFormData({ fullName: "", email: "", content: "" });
+            setErrors({ fullName: "", email: "", content: "" });
+        }
+    };
 
     return (
         <div className="max-w mr-20 ml-20 px-4 py-12 flex flex-col md:flex-row gap-8">
-            {/* Left side: Contact info + form */}
             <div className="flex-1">
-                {/* Contact info */}
                 <div className="space-y-6 mb-12">
                     <div className="flex items-center gap-4 text-gray-700">
                         <svg
@@ -64,39 +136,58 @@ const ContactPage: React.FC = () => {
 
                 <hr className="my-8" />
 
-                {/* Contact form */}
                 <div>
                     <h3 className="font-semibold text-lg mb-6">{t("contact_us")}</h3>
                     <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
-                        <input
-                            type="text"
-                            placeholder={t('full_name')}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-full placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
-                            required
-                        />
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            className="w-full px-4 py-3 border border-gray-300 rounded-full placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400"
-                            required
-                        />
-                        <textarea
-                            placeholder={t('content')}
-                            rows={5}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 resize-none"
-                            required
-                        ></textarea>
+                        <div>
+                            <input
+                                type="text"
+                                name="fullName"
+                                value={formData.fullName}
+                                onChange={handleInputChange}
+                                onBlur={handleBlur}
+                                placeholder={t("full_name")}
+                                className={`w-full px-4 py-3 border ${errors.fullName ? "border-red-500" : "border-gray-300"
+                                    } rounded-full placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400`}
+                            />
+                            {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
+                        </div>
+                        <div>
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                onBlur={handleBlur}
+                                placeholder="Email"
+                                className={`w-full px-4 py-3 border ${errors.email ? "border-red-500" : "border-gray-300"
+                                    } rounded-full placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400`}
+                            />
+                            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                        </div>
+                        <div>
+                            <textarea
+                                name="content"
+                                value={formData.content}
+                                onChange={handleInputChange}
+                                onBlur={handleBlur}
+                                placeholder={t("content")}
+                                rows={5}
+                                className={`w-full px-4 py-3 border ${errors.content ? "border-red-500" : "border-gray-300"
+                                    } rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 resize-none`}
+                            ></textarea>
+                            {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content}</p>}
+                        </div>
                         <button
                             type="submit"
-                            className="text-white bg-primary hover:bg-purple-800 font-semibold rounded-lg px-8 py-3  transition"
+                            className="text-white bg-primary hover:bg-purple-800 font-semibold rounded-lg px-8 py-3 transition"
                         >
-                            {t(('send_contact'))}
+                            {t("send_contact")}
                         </button>
                     </form>
                 </div>
             </div>
 
-            {/* Right side: Map */}
             <div className="flex-1 min-h-[450px] rounded-lg overflow-hidden shadow-lg">
                 <iframe
                     title="Google Map"
