@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { FaPen } from "react-icons/fa";
+import { FaPen,  } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
 import { OrderType } from "@/utils/models";
 import { getAllOrders, update } from "@/api/Order";
 import { IoMdClose } from "react-icons/io";
-
 import { formatPrice } from "@/utils";
 import { FaHome } from "react-icons/fa";
 import ShippingStatusComp from "./components/ShippingStatus";
@@ -16,11 +14,13 @@ import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
 interface PopupViewDetailProps {
   order: OrderType | undefined;
   hide: () => void;
+  onUpdateSuccess: () => void;
 }
 
-const PopupViewDetail: React.FC<PopupViewDetailProps> = ({ order, hide }) => {
+const PopupViewDetail: React.FC<PopupViewDetailProps> = ({ order, hide, onUpdateSuccess }) => {
   const [orderStatus, setOrderStatus] = useState(order?.status);
   const toast = useContext(ToastContext);
+
   const change = async (orderId: number, s: number) => {
     if (s === ShippingStatus.CANCELLED)
       return toast.showToast("Đơn hàng đã được huỷ");
@@ -37,247 +37,212 @@ const PopupViewDetail: React.FC<PopupViewDetailProps> = ({ order, hide }) => {
 
     const response = await update(orderId, s);
     if (response.success) {
-      hide();
       toast.showToast("Cập nhật thành công");
+      onUpdateSuccess();
+      hide();
+    } else {
+      toast.showToast("Cập nhật thất bại");
     }
   };
+
   const saveChangeOrder = (order: OrderType) => {
     change(order.id, orderStatus || 0);
   };
 
+  if (!order) return null;
+
   return (
-      <div className="fixed top-0 left-0 grid w-full h-full duration-500 bg-black place-items-center bg-opacity-60">
-        <div className="bg-gray-50 p-3 rounded max-w-[1024px] flex flex-col gap-3">
-          <div className="flex justify-between">
-            <div className="flex flex-col w-1/3 gap-1">
-              <div className="flex items-center gap-3">
-                <div className="flex gap-2 w-fit">
-                  <div>Mã đơn hàng:</div> <div>#{order?.id}</div>
-                </div>
-                <PaymentStatusComp status={order?.paymentStatus} />
-              </div>
-              <div>Ngày đặt: {order?.createDate}</div>
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 animate-fade-in">
+      <div className="bg-white p-6 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-3">
+              <h2 className="text-xl font-bold">Mã đơn hàng: #{order.id}</h2>
+              <PaymentStatusComp status={order.paymentStatus} />
             </div>
-            <IoMdClose
-                className="text-stroke text-[35px] cursor-pointer hover:text-primary"
-                onClick={hide}
-            />
+            <p className="text-gray-600">Ngày đặt: {order.createDate}</p>
           </div>
-          <div className="flex gap-2">
-            <div className="flex flex-col gap-1 p-2 bg-white rounded shadow-lg">
-              <strong>Thông tin người nhận</strong>
-              <div>#{order?.customer.id + " - " + order?.customer.username}</div>
-              <div className="flex gap-2">
-                <FaHome className="text-primary" />
-                <div> {order?.address}</div>{" "}
-              </div>
-            </div>
-            <div className="flex flex-col gap-1 p-2 max-w-[300px] bg-white rounded shadow-lg">
-              <strong>Ghi chú</strong>
-              <div>{order?.note}</div>
-            </div>
-            <div className="flex flex-col gap-1 p-2 min-w-[250px] bg-white rounded shadow-lg">
-              <strong>Tổng tiền</strong>
-              <div className="flex justify-between">
-                <div>Tạm tính:</div>
-                <div>
-                  {formatPrice((order?.total || 0) + (order?.discount || 0))}
-                </div>
-              </div>
-              <div className="flex justify-between">
-                <div>Giảm giá:</div>
-                <div className="text-orange-400">
-                  -{formatPrice(order?.discount || 0)}
-                </div>
-              </div>
-              <div className="flex justify-between">
-                <strong>Tổng tiền:</strong>
-                <strong className="text-red-500">
-                  {formatPrice(order?.total || 0)}
-                </strong>
-              </div>
+          <IoMdClose
+            className="text-3xl cursor-pointer hover:text-primary transition"
+            onClick={hide}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+            <h3 className="font-semibold mb-2">Thông tin người nhận</h3>
+            <p>#{order.customer.id} - {order.customer.username}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <FaHome className="text-primary" />
+              <p>{order.address}</p>
             </div>
           </div>
-          <div className="flex gap-4">
-            <strong>Thông tin vận chuyển</strong>
-            <select
-                value={orderStatus}
-                onChange={(e) => setOrderStatus(parseInt(e.target.value))}
-            >
-              <option value={ShippingStatus.PENDING}>
-                {ShippingLabel.PENDING}
-              </option>
-              <option value={ShippingStatus.PROCESSING}>
-                {ShippingLabel.PROCESSING}
-              </option>
-              <option value={ShippingStatus.CONFIRMED}>
-                {ShippingLabel.CONFIRMED}
-              </option>
-              <option value={ShippingStatus.RETURNED}>
-                {ShippingLabel.RETURNED}
-              </option>
-              <option value={ShippingStatus.CANCELLED}>
-                {ShippingLabel.CANCELLED}
-              </option>
-              <option value={ShippingStatus.DELAYED}>
-                {ShippingLabel.DELAYED}
-              </option>
-              <option value={ShippingStatus.DELIVERY}>
-                {ShippingLabel.DELIVERY}
-              </option>
-              <option value={ShippingStatus.FAIL}>{ShippingLabel.FAIL}</option>
-              <option value={ShippingStatus.SUCCESS}>
-                {ShippingLabel.SUCCESS}
-              </option>
-            </select>
+          <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+            <h3 className="font-semibold mb-2">Ghi chú</h3>
+            <p className="text-gray-600">{order.note || "Không có ghi chú"}</p>
           </div>
-          <div className="flex flex-col gap-2 p-2 bg-white rounded shadow-lg">
-            <strong>Sản phẩm</strong>
-            {order?.orderDetails?.map((detail) => {
-              return (
-                  <div key={detail.id} className="flex gap-10">
-                    <img
-                        className="w-[92px] rounded h-[92px]"
-                        src={detail.product.images[0].url}
-                        alt=""
-                    />
-                    <div className="flex flex-col max-w-[250px]">
-                      <strong>{detail.product.name}</strong>
-                      <div>{detail.phoneCategory?.name || ""}</div>
-                    </div>
-                    <div>SL: {detail.quantity}</div>
-                    <div>{formatPrice(detail.price)}</div>
-                  </div>
-              );
-            })}
-          </div>
-          <div className="flex justify-end gap-2">
-            <button
-                onClick={hide}
-                className="px-5 py-2 bg-white rounded-2xl hover:bg-gray-200"
-            >
-              Huỷ
-            </button>
-            <button
-                onClick={() => order && saveChangeOrder(order)}
-                className="px-5 py-2 bg-primary rounded-2xl bg-opacity-90 hover:bg-opacity-100"
-            >
-              Cập nhật
-            </button>
+          <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
+            <h3 className="font-semibold mb-2">Tổng tiền</h3>
+            <div className="flex justify-between">
+              <span>Tạm tính:</span>
+              <span>{formatPrice((order.total || 0) + (order.discount || 0))}</span>
+            </div>
+            <div className="flex justify-between text-orange-500">
+              <span>Giảm giá:</span>
+              <span>-{formatPrice(order.discount || 0)}</span>
+            </div>
+            <div className="flex justify-between font-bold text-red-500">
+              <span>Tổng tiền:</span>
+              <span>{formatPrice(order.total || 0)}</span>
+            </div>
           </div>
         </div>
+
+        <div className="mb-4">
+          <h3 className="font-semibold mb-2">Trạng thái vận chuyển</h3>
+          <select
+            value={orderStatus}
+            onChange={(e) => setOrderStatus(parseInt(e.target.value))}
+            className="p-2 border border-gray-300 rounded-md w-full sm:w-64 focus:ring-2 focus:ring-primary"
+            disabled={[ShippingStatus.CANCELLED, ShippingStatus.SUCCESS, ShippingStatus.FAIL, ShippingStatus.RETURNED, ShippingStatus.DELIVERY, ShippingStatus.DELAYED].includes(orderStatus || 0)}
+          >
+            <option value={ShippingStatus.PENDING}>{ShippingLabel.PENDING}</option>
+            <option value={ShippingStatus.PROCESSING}>{ShippingLabel.PROCESSING}</option>
+            <option value={ShippingStatus.CONFIRMED}>{ShippingLabel.CONFIRMED}</option>
+            <option value={ShippingStatus.RETURNED}>{ShippingLabel.RETURNED}</option>
+            <option value={ShippingStatus.CANCELLED}>{ShippingLabel.CANCELLED}</option>
+            <option value={ShippingStatus.DELAYED}>{ShippingLabel.DELAYED}</option>
+            <option value={ShippingStatus.DELIVERY}>{ShippingLabel.DELIVERY}</option>
+            <option value={ShippingStatus.FAIL}>{ShippingLabel.FAIL}</option>
+            <option value={ShippingStatus.SUCCESS}>{ShippingLabel.SUCCESS}</option>
+          </select>
+        </div>
+
+        <div className="p-4 bg-gray-50 rounded-lg shadow-sm mb-4">
+          <h3 className="font-semibold mb-2">Sản phẩm</h3>
+          {order.orderDetails?.map((detail) => (
+            <div key={detail.id} className="flex items-center gap-4 mb-3">
+              <img
+                className="w-20 h-20 rounded-md object-cover"
+                src={detail.product.images[0].url}
+                alt={detail.product.name}
+              />
+              <div className="flex-1">
+                <p className="font-semibold">{detail.product.name}</p>
+                <p className="text-gray-600">{detail.phoneCategory?.name || ""}</p>
+              </div>
+              <p>Số lượng: {detail.quantity}</p>
+              <p className="font-semibold">{formatPrice(detail.price)}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={hide}
+            className="px-5 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition"
+          >
+            Hủy
+          </button>
+          <button
+            onClick={() => saveChangeOrder(order)}
+            className="px-5 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition"
+          >
+            Cập nhật
+          </button>
+        </div>
       </div>
+    </div>
   );
 };
 
 const OrdersManagePage = () => {
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [orderEditing, setOrderEditing] = useState<OrderType>();
-
   const [viewDetail, setViewDetail] = useState(false);
+  const toast = useContext(ToastContext);
+
+  const fetchOrders = async () => {
+    const response = await getAllOrders();
+    if (response.success) {
+      setOrders(response.orders);
+    } else {
+      toast.showToast("Lấy danh sách đơn hàng thất bại");
+    }
+  };
+
   useEffect(() => {
-    // call api to get all orders
-    getAllOrders().then((response) => {
-      response.success && setOrders(response.orders);
-    });
+    fetchOrders();
   }, []);
+
   const handleViewDetail = (order: OrderType) => {
     setViewDetail(true);
     setOrderEditing(order);
   };
 
+  const handleUpdateSuccess = () => {
+    fetchOrders();
+  };
+
   return (
-      <div className="flex flex-col w-full gap-2 p-1 rounded shadow-sm">
-        {viewDetail && (
-            <PopupViewDetail
-                order={orderEditing}
-                hide={() => setViewDetail(false)}
-            />
-        )}
-        <div className="text-[25px]">{"Quản lý đơn hàng"}</div>
-        <div className="flex items-center justify-end gap-2">
-          <input
-              type="search"
-              className="px-4 py-2 mx-2 text-base border border-black rounded outline-none h-fit opacity-80"
-              placeholder="Tìm kiếm..."
-          />
-          <button className="focus:outline-none text-white bg-primary hover:bg-purple-800  font-medium rounded-lg text-base px-4 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-300">
-            Thêm
-          </button>
-          <button className="focus:outline-none text-white bg-primary hover:bg-purple-800  font-medium rounded-lg text-base px-4 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-300">
-            Xoá
-          </button>
-        </div>
-        <div className="flex flex-col gap-3">
-          <div className="grid grid-cols-12 pb-2 border-b border-black text-nowrap text-stroke ">
-            <div className="flex col-span-1 gap-2">
-              <input type="checkbox" className="w-6 " />
-              <div>Mã DH</div>
-            </div>
-            <div className="flex w-full col-span-2 line-clamp-1 ">
-              <div className="w-4/5">Khách hàng</div>
-              <div className="w-1/5">SL</div>
-            </div>
-            <div className="flex w-full col-span-1 gap-3">
-              <div>Tổng tiền</div>
-            </div>
-            {/* <div className="w-full col-span-1"></div> */}
-            <div className="w-full col-span-1">Ngày đặt</div>
-            <div className="flex items-center w-full col-span-3 text-center">
-              <div className="w-1/2 line-clamp-2">Địa chỉ</div>
-              <div className="w-1/2 line-clamp-2">Ghi chú</div>
-            </div>
-            <div className="flex items-center w-full col-span-3 gap-4 text-center">
-              <div className="w-1/2">Thanh toán</div>
-              <div className="w-1/2">Giao hàng</div>
-            </div>
-            {/* <div className="w-full col-span-1"></div> */}
-            <div className="col-span-1 "></div>
+    <div className="flex flex-col w-full gap-4 p-4 bg-white rounded-lg shadow-sm">
+      {viewDetail && (
+        <PopupViewDetail
+          order={orderEditing}
+          hide={() => setViewDetail(false)}
+          onUpdateSuccess={handleUpdateSuccess}
+        />
+      )}
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Quản lý đơn hàng</h1>
+
+      </div>
+
+      <div className="overflow-x-auto">
+        <div className="min-w-[1000px]">
+          <div className="grid grid-cols-12 gap-4 bg-gray-50 p-3 rounded-t-md font-semibold text-gray-700">
+            <div className="col-span-1 flex items-center gap-2">Mã DH</div>
+            <div className="col-span-2">Khách hàng</div>
+            <div className="col-span-2">Tổng tiền</div>
+            <div className="col-span-1">Ngày đặt</div>
+            <div className="col-span-2 text-center">Thanh toán</div>
+            <div className="col-span-2 text-center">Trạng thái</div>
+            <div className="col-span-2 text-center">Hành động</div>
           </div>
-          {orders.map((order) => {
-            return (
-                <div
-                    key={order.id}
-                    className="grid items-center grid-cols-12 pb-2 border-b border-stroke text-stroke"
-                >
-                  <div className="flex col-span-1 gap-2">
-                    <input type="checkbox" className="w-6 " />
-                    <div className="">#{order.id}</div>
-                  </div>
-                  <div className="flex w-full col-span-2 line-clamp-1 ">
-                    <div className="w-4/5">
-                      {"#" + order.customer.id + "-" + order.customer.username}
-                    </div>
-                    <div className="w-1/5">{order.orderDetails.length}</div>
-                  </div>
-                  <div className="flex w-full col-span-1 gap-3">
-                    <div>{formatPrice(order.total)}</div>
-                  </div>
-                  <div className="w-full col-span-1">
-                    {order.createDate.slice(0, 10)}
-                  </div>
-                  <div className="flex items-center w-full col-span-3 text-center">
-                    <div className="w-1/2">{order.address}</div>
-                    <div className="w-1/2 line-clamp-2">{order.note}</div>
-                  </div>
-                  <div className="flex w-full col-span-3 gap-4 mx-auto">
-                    {/* payment status */}
-                    <PaymentStatusComp status={order.paymentStatus} />
-                    {/* shipping status */}
-                    <ShippingStatusComp status={order.status} />
-                  </div>
-                  <div className="flex items-center col-span-1 gap-2 text-xl ">
-                    <FaPen
-                        onClick={() => handleViewDetail(order)}
-                        className="cursor-pointer hover:text-primary"
-                    />
-                    <RiDeleteBin5Line className="cursor-pointer hover:text-primary" />
-                  </div>
-                </div>
-            );
-          })}
+          {orders.map((order) => (
+            <div
+              key={order.id}
+              className="grid grid-cols-12 gap-4 p-3 border-b border-gray-200 hover:bg-gray-100 transition"
+            >
+              <div className="col-span-1 flex items-center gap-2">
+                <input type="checkbox" className="w-4 h-4" />
+                #{order.id}
+              </div>
+              <div className="col-span-2">
+                #{order.customer.id} - {order.customer.username}
+                <p className="text-sm text-gray-500">SL: {order.orderDetails.length}</p>
+              </div>
+              <div className="col-span-2">{formatPrice(order.total)}</div>
+              <div className="col-span-1">{order.createDate.slice(0, 10)}</div>
+              <div className="col-span-2 flex justify-center">
+                <PaymentStatusComp status={order.paymentStatus} />
+              </div>
+              <div className="col-span-2 flex justify-center">
+                <ShippingStatusComp status={order.status} />
+              </div>
+              <div className="col-span-2 flex justify-center gap-3 text-lg">
+                <FaPen
+                  onClick={() => handleViewDetail(order)}
+                  className="cursor-pointer hover:text-primary transition"
+                  title="Xem và chỉnh sửa"
+                />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
+    </div>
   );
 };
+
 export default OrdersManagePage;

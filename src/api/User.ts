@@ -77,3 +77,25 @@ export const updateUserRole = async (userId: number, role: number) => {
     }
 };
 
+export const updateUserStatus = async (userId: number, status: number) => {
+    try {
+        const response = await axios.put(
+            `${import.meta.env.VITE_API_END_POINT}/customers/updateStatus`,
+            {
+                id: userId,
+                status: status,
+            },
+            {
+                headers: getAuthHeader(),
+            }
+        );
+        if (response.data.status === "ok") {
+            return { success: true };
+        } else {
+            return { success: false, message: "Cập nhật trạng thái thất bại" };
+        }
+    } catch (error: any) {
+        return { success: false, message: error.message };
+    }
+};
+

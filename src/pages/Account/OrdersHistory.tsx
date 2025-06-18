@@ -58,168 +58,194 @@ const OrdersHistory = () => {
   };
 
   return (
-      <div className="flex flex-col gap-2">
-        {popup && (
-            <div className="fixed top-0 left-0 z-10 flex items-center justify-center w-full h-full overflow-hidden bg-stroke bg-opacity-60">
-              <div className="bg-tertiary w-[500px] relative z-[1] bg-white h-fit p-5 py-12 rounded flex-col gap-3 flex">
-                <div className="font-bold text-[28px]">
-                  {t('confirm_cancel')}
-                </div>
-                <div className="flex gap-8 pt-5 text-[18px]">
-                  <div
-                      className="cursor-pointer hover:text-primary"
-                      onClick={() => setPopup(false)}
-                  >
-                    {t('no')}
-                  </div>
-                  <div
-                      className="cursor-pointer hover:text-primary"
-                      onClick={() => handleCancel(currentOrderId || 1)}
-                  >
-                    {t('confirm')}
-                  </div>
-                </div>
-              </div>
+    <div className="flex flex-col gap-2">
+      {popup && (
+        <div className="fixed top-0 left-0 z-10 flex items-center justify-center w-full h-full overflow-hidden bg-stroke bg-opacity-60">
+          <div className="bg-tertiary w-[500px] relative z-[1] bg-white h-fit p-5 py-12 rounded flex-col gap-3 flex">
+            <div className="font-bold text-[28px]">
+              {t('confirm_cancel')}
             </div>
-        )}
-
-        {openDetail && (
-            <div
-                id={`detail-${orderIndex}`}
-                className="fixed top-0 left-0 z-10 flex items-center justify-center w-full h-full overflow-hidden bg-stroke bg-opacity-60"
-            >
+            <div className="flex gap-8 pt-5 text-[18px]">
               <div
-                  id="form"
-                  className="bg-tertiary w-[750px] relative z-[1] bg-white h-fit p-5 pt-0 rounded flex-col gap-3 flex"
+                className="cursor-pointer hover:text-primary"
+                onClick={() => setPopup(false)}
               >
-                <div className="flex flex-col">
-                  <div
-                      className="text-[40px] text-right cursor-pointer hover:text-primary"
-                      onClick={() => setOpenDetail(false)}
-                  >
-                    x
+                {t('no')}
+              </div>
+              <div
+                className="cursor-pointer hover:text-primary"
+                onClick={() => handleCancel(currentOrderId || 1)}
+              >
+                {t('confirm')}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {openDetail && (
+        <div
+          id={`detail-${orderIndex}`}
+          className="fixed top-0 left-0 z-10 flex items-center justify-center w-full h-full overflow-hidden bg-stroke bg-opacity-60"
+        >
+          <div
+            id="form"
+            className="bg-tertiary w-[750px] relative z-[1] bg-white h-fit p-5 pt-0 rounded flex-col gap-3 flex"
+          >
+            <div className="flex flex-col">
+              <div
+                className="text-[40px] text-right cursor-pointer hover:text-primary"
+                onClick={() => setOpenDetail(false)}
+              >
+                x
+              </div>
+              <div className="flex flex-row gap-2">
+                <div>{orders[orderIndex].customer.username}</div>
+                <div>{orders[orderIndex].customer.phone}</div>
+              </div>
+              <div>{orders[orderIndex].address}</div>
+              <div>{t('pay_on_delivery')}</div>
+              <div>{t('note')}: {orders[orderIndex].note}</div>
+            </div>
+
+            <div className="flex flex-col gap-2 py-4">
+              <div className="grid grid-cols-10 py-1 text-center text-white bg-gray-700 rounded-sm">
+                <div className="col-span-5">{t('product')}</div>
+                <div className="col-span-1">{t('quantity')}</div>
+                <div className="col-span-2">{t('unit_price')}</div>
+                <div className="col-span-2">{t('total_price')}</div>
+              </div>
+
+              {orders[orderIndex].orderDetails.map((orderDetail) => (
+                <div key={orderDetail.id} className="grid grid-cols-10 text-center">
+                  <div className="col-span-5">
+                    {orderDetail.product.name + ', ' + orderDetail.phoneCategory.name}
                   </div>
-                  <div className="flex flex-row gap-2">
-                    <div>{orders[orderIndex].customer.username}</div>
-                    <div>{orders[orderIndex].customer.phone}</div>
+                  <div className="col-span-1">{orderDetail.quantity}</div>
+                  <div className="col-span-2">{formatPrice(orderDetail.product.price)}</div>
+                  <div className="col-span-2">
+                    {formatPrice(orderDetail.product.price * orderDetail.quantity)}
                   </div>
-                  <div>{orders[orderIndex].address}</div>
-                  <div>{t('pay_on_delivery')}</div>
-                  <div>{t('note')}: {orders[orderIndex].note}</div>
                 </div>
+              ))}
 
-                <div className="flex flex-col gap-2 py-4">
-                  <div className="grid grid-cols-10 py-1 text-center text-white bg-gray-700 rounded-sm">
-                    <div className="col-span-5">{t('product')}</div>
-                    <div className="col-span-1">{t('quantity')}</div>
-                    <div className="col-span-2">{t('unit_price')}</div>
-                    <div className="col-span-2">{t('total_price')}</div>
-                  </div>
-
-                  {orders[orderIndex].orderDetails.map((orderDetail) => (
-                      <div key={orderDetail.id} className="grid grid-cols-10 text-center">
-                        <div className="col-span-5">
-                          {orderDetail.product.name + ', ' + orderDetail.phoneCategory.name}
-                        </div>
-                        <div className="col-span-1">{orderDetail.quantity}</div>
-                        <div className="col-span-2">{formatPrice(orderDetail.product.price)}</div>
-                        <div className="col-span-2">
-                          {formatPrice(orderDetail.product.price * orderDetail.quantity)}
-                        </div>
-                      </div>
-                  ))}
-
-                  <div className="flex flex-col items-end gap-1 p-3">
-                    <div>
-                      <strong>{t('total')}:</strong>{' '}
-                      {formatPrice(
-                          orders[orderIndex].orderDetails.reduce(
-                              (acc, cur) => acc + cur.product.price * cur.quantity,
-                              0
-                          )
-                      )}
-                    </div>
-                    <div>
-                      <strong>{t('shipping_fee')}:</strong>{' '}
-                      {' + '}
-                      {formatPrice(
-                          orders[orderIndex].orderDetails.reduce(
-                              (acc, cur) => acc + cur.product.price * cur.quantity,
-                              0
-                          ) - orders[orderIndex].total
-                      )}
-                    </div>
-                    <div>
-                      <strong>{t('promotion')}:</strong>{' '}
-                      {' - '}
-                      {formatPrice(orders[orderIndex].discount)}
-                    </div>
-                    <div>
-                      <strong>{t('final_total')}:</strong>{' '}
-                      {formatPrice(
-                          2 *
-                          orders[orderIndex].orderDetails.reduce(
-                              (acc, cur) => acc + cur.product.price * cur.quantity,
-                              0
-                          ) -
-                          orders[orderIndex].total
-                      )}
-                    </div>
-                  </div>
+              <div className="flex flex-col items-end gap-1 p-3">
+                <div>
+                  <strong>{t('total')}:</strong>{' '}
+                  {formatPrice(
+                    orders[orderIndex].orderDetails.reduce(
+                      (acc, cur) => acc + cur.product.price * cur.quantity,
+                      0
+                    )
+                  )}
+                </div>
+                <div>
+                  <strong>{t('shipping_fee')}:</strong>{' '}
+                  {' + '}
+                  {formatPrice(
+                    orders[orderIndex].orderDetails.reduce(
+                      (acc, cur) => acc + cur.product.price * cur.quantity,
+                      0
+                    ) - orders[orderIndex].total
+                  )}
+                </div>
+                <div>
+                  <strong>{t('promotion')}:</strong>{' '}
+                  {' - '}
+                  {formatPrice(orders[orderIndex].discount)}
+                </div>
+                <div>
+                  <strong>{t('final_total')}:</strong>{' '}
+                  {formatPrice(
+                    2 *
+                    orders[orderIndex].orderDetails.reduce(
+                      (acc, cur) => acc + cur.product.price * cur.quantity,
+                      0
+                    ) -
+                    orders[orderIndex].total
+                  )}
                 </div>
               </div>
             </div>
-        )}
-
-        <div className="text-[25px] p-5">{t('order_history')}</div>
-
-        <div className="flex flex-col gap-2 divide-y-2 divide-black">
-          <div className="grid grid-cols-6 font-bold place-items-center">
-            <div>{t('order_id')}</div>
-            <div>{t('order_date')}</div>
-            <div>{t('order_total')}</div>
-            <div>{t('payment_method')}</div>
-            <div>{t('order_status')}</div>
-            <div></div>
           </div>
+        </div>
+      )}
 
-          {orders.map((order, index) => (
-              <div key={order.id} className="flex flex-col divide-y divide-black">
-                <div className="grid grid-cols-6 py-3 place-items-center">
-                  <div className="font-bold text-primary">{order.id}</div>
-                  <div>{order.createDate.slice(0, 10)}</div>
-                  <div>{formatPrice(order.total)}</div>
-                  <div>
-                    {order.paymentStatus === PaymentStatus.PAID
-                        ? t('paid')
-                        : t('unpaid')}
-                  </div>
-                  <div>
-                    {t(`shipping_status`)}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <label
-                        htmlFor={`detail-${orderIndex}`}
-                        onClick={() => handleOpenDetail(index)}
-                        className={`flex items-center gap-2 cursor-pointer hover:text-primary${
-                            openDetail ? ' text-primary' : ''
-                        }`}
-                    >
-                      <div className="text-nowrap">{t('order_detail')}</div>
-                      <FaInfoCircle className="text-2xl" />
-                    </label>
-                    <div
-                        onClick={() => handleClickCancel(order.id, index)}
-                        className="grid h-full px-2 py-1 bg-gray-400 rounded cursor-pointer hover:bg-red-500 text-nowrap place-items-center"
-                    >
-                      {t('cancel_order')}
-                    </div>
-                  </div>
+      <div className="text-[25px] p-5">{t('order_history')}</div>
+
+      <div className="flex flex-col gap-2 divide-y-2 divide-black">
+        <div className="grid grid-cols-6 font-bold place-items-center">
+          <div>{t('order_id')}</div>
+          <div>{t('order_date')}</div>
+          <div>{t('order_total')}</div>
+          <div>{t('payment_method')}</div>
+          <div>{t('order_status')}</div>
+          <div></div>
+        </div>
+
+        {orders.map((order, index) => (
+          <div key={order.id} className="flex flex-col divide-y divide-black">
+            <div className="grid grid-cols-6 py-3 place-items-center">
+              <div className="font-bold text-primary">{order.id}</div>
+              <div>{order.createDate.slice(0, 10)}</div>
+              <div>{formatPrice(order.total)}</div>
+              <div>
+                {order.paymentStatus === PaymentStatus.PAID
+                  ? t('paid')
+                  : t('unpaid')}
+              </div>
+              <div>
+                <div>
+                  {order.status === ShippingStatus.CANCELLED && (
+                    <div>{t("cancelled")}</div>
+                  )}
+                  {order.status === ShippingStatus.CONFIRMED && (
+                    <div>{t("confirmed")}</div>
+                  )}
+                  {order.status === ShippingStatus.DELAYED && (
+                    <div>{t("rescheduled")}</div>
+                  )}
+                  {order.status === ShippingStatus.DELIVERY && (
+                    <div>{t("delivering")}</div>
+                  )}
+                  {order.status === ShippingStatus.FAIL && (
+                    <div>{t("order_failed")}</div>
+                  )}
+                  {order.status === ShippingStatus.PENDING && (
+                    <div>{t("pending_confirmation")}</div>
+                  )}
+                  {order.status === ShippingStatus.PROCESSING && (
+                    <div>{t("processing")}</div>
+                  )}
+                  {order.status === ShippingStatus.RETURNED && (
+                    <div>{t("returned")}</div>
+                  )}
+                  {order.status === ShippingStatus.SUCCESS && (
+                    <div>{t("successful")}</div>
+                  )}
                 </div>
               </div>
-          ))}
-        </div>
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor={`detail-${orderIndex}`}
+                  onClick={() => handleOpenDetail(index)}
+                  className={`flex items-center gap-2 cursor-pointer hover:text-primary${openDetail ? ' text-primary' : ''
+                    }`}
+                >
+                  <FaInfoCircle className="text-2xl" />
+                </label>
+                <div
+                  onClick={() => handleClickCancel(order.id, index)}
+                  className="grid h-full px-2 py-1 bg-gray-400 rounded cursor-pointer hover:bg-red-500 text-nowrap place-items-center"
+                >
+                  {t('cancel_order')}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
+    </div>
   );
 };
 

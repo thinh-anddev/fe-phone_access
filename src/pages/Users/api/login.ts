@@ -14,9 +14,12 @@ export const login = async (email: string, password: string) => {
       sessionStorage.setItem("user", JSON.stringify(data.customer));
       localStorage.setItem("token", data.token);
       return { success: true, user: data.customer };
-    } else {
+    } else if (response.data.status == "inactive") {
+      return { success: false, message: "Your account is inactive" };
+    }
+    else {
       console.log(response.data);
-      
+
       return { success: false, message: "Wrong username or password" };
     }
   } catch (error: any) {

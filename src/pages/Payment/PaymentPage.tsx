@@ -34,7 +34,7 @@ const PaymentPage = () => {
   const [wardValSelected, setWardValSelected] = useState("");
   const [subAddress, setSubAddtress] = useState("");
   const [note, setNote] = useState("");
-  const [payment, setPayment] = useState(1); // 1 là người bán trả (người mua đã thanh toán qua vnpay), 2 là người mua trả
+  const [payment, setPayment] = useState(1); // 1 là người bán trả, 2 là người mua trả
   const [listItem, setListItem] = useState<any>([]);
   const [discount, setDiscount] = useState<number>(0);
   const [shippingFee, setShippingFee] = useState(0);
@@ -47,6 +47,18 @@ const PaymentPage = () => {
   const [loadingPaying, setLoadingPaying] = useState(false);
   const navigate = useNavigate();
   const queryParams: any = {};
+
+  // State cho lỗi validation
+  const [errors, setErrors] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    province: "",
+    district: "",
+    ward: "",
+    subAddress: "",
+    discount: "",
+  });
 
   useEffect(() => {
     getListProvince().then((res) => {
@@ -63,14 +75,14 @@ const PaymentPage = () => {
     setWardIdSelected(() => 0);
     if (idSelected === "") {
       setProvinceIdSelected(() => 0);
-
       setProvinceValSelected(() => "");
+      setErrors((prev) => ({ ...prev, province: t("province_required") }));
       return;
     }
-
     const valSelected = e.target.options[e.target.selectedIndex].text;
     setProvinceIdSelected(() => parseInt(idSelected));
     setProvinceValSelected(() => valSelected);
+    setErrors((prev) => ({ ...prev, province: "" }));
     getListDistrict(parseInt(idSelected)).then((res) => {
       setListDistrict(() => res.data);
     });
@@ -82,12 +94,13 @@ const PaymentPage = () => {
     if (idSelected === "") {
       setDistrictIdSelected(() => 0);
       setDistrictValSelected(() => "");
+      setErrors((prev) => ({ ...prev, district: t("district_required") }));
       return;
     }
-
     const valSelected = e.target.options[e.target.selectedIndex].text;
     setDistrictIdSelected(() => parseInt(idSelected));
     setDistrictValSelected(() => valSelected);
+    setErrors((prev) => ({ ...prev, district: "" }));
     getListWard(parseInt(idSelected)).then((res) => {
       setListWard(() => res.data);
     });
@@ -102,7 +115,8 @@ const PaymentPage = () => {
         0
       );
       return totalWithoutDiscount;
-    } else return 0;
+    }
+    return 0;
   };
 
   const getFutureTimestamp = (hoursToAdd: number) => {
@@ -125,15 +139,18 @@ const PaymentPage = () => {
 
   const handleApplyDiscount = () => {
     if (discount < 0) {
+      setErrors((prev) => ({ ...prev, discount: t("invalid_discount_points") }));
       showToast(t("invalid_discount_points"));
       return;
     }
     if (discount > user.point) {
+      setErrors((prev) => ({ ...prev, discount: t("not_enough_discount_points") }));
       showToast(t("not_enough_discount_points"));
       return;
     }
+    setErrors((prev) => ({ ...prev, discount: "" }));
     setPointAccepted(discount);
-    setTotalOrder(calTotalOrder() - discount * 1000);
+    setTotalOrder(calTotalOrder() - discount * 100);
   };
 
   const handleChangeAddress = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -153,7 +170,92 @@ const PaymentPage = () => {
       setDistrictValSelected(address.districtValue);
       setProvinceIdSelected(address.provinceId);
       setProvinceValSelected(address.provinceValue);
+      setErrors((prev) => ({
+        ...prev,
+        province: "",
+        district: "",
+        ward: "",
+        subAddress: "",
+      }));
     }
+  };
+
+  const validateField = (fieldName: string, value: string) => {
+    const newErrors = { ...errors };
+    switch (fieldName) {
+      case "name":
+        if (!value.trim()) newErrors.name = t("name_required");
+        else newErrors.name = "";
+        break;
+      case "phone":
+        const phoneRegex = /^0[0-9]{9,10}$/;
+        if (!value.trim()) newErrors.phone = t("phone_required");
+        else if (!phoneRegex.test(value)) newErrors.phone = t("invalid_phone_format");
+        else newErrors.phone = "";
+        break;
+      case "email":
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value.trim()) newErrors.email = t("email_required");
+        else if (!emailRegex.test(value)) newErrors.email = t("invalid_email_format");
+        else newErrors.email = "";
+        break;
+      case "subAddress":
+        if (!value.trim()) newErrors.subAddress = t("sub_address_required");
+        else newErrors.subAddress = "";
+        break;
+      default:
+        break;
+    }
+    setErrors(newErrors);
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = {
+      name: "",
+      phone: "",
+      email: "",
+      province: "",
+      district: "",
+      ward: "",
+      subAddress: "",
+      discount: errors.discount,
+    };
+
+    // Validate name
+    if (!name.trim()) {
+      newErrors.name = t("name_required");
+      isValid = false;
+    }
+
+    // Validate phone
+    const phoneRegex = /^0[0-9]{9,10}$/;
+    if (!phone.trim()) {
+      newErrors.phone = t("phone_required");
+      isValid = false;
+    } else if (!phoneRegex.test(phone)) {
+      newErrors.phone = t("invalid_phone_format");
+      isValid = false;
+    }
+
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim()) {
+      newErrors.email = t("email_required");
+      isValid = false;
+    } else if (!emailRegex.test(email)) {
+      newErrors.email = t("invalid_email_format");
+      isValid = false;
+    }
+
+    // Validate address fields
+    if (!provinceValSelected) newErrors.province = t("province_required");
+    if (!districtValSelected) newErrors.district = t("district_required");
+    if (!wardValSelected) newErrors.ward = t("ward_required");
+    if (!subAddress.trim()) newErrors.subAddress = t("sub_address_required");
+
+    setErrors(newErrors);
+    return isValid;
   };
 
   const handleSubmit = async () => {
@@ -162,6 +264,7 @@ const PaymentPage = () => {
     let point = 0;
     let objShippingFee = 0;
     const vnpResponseCode = queryParams?.vnp_ResponseCode;
+
     if (vnpResponseCode && vnpResponseCode == "00") {
       const orderDetailsJSON = localStorage.getItem("orderDetails");
       if (orderDetailsJSON) {
@@ -174,20 +277,8 @@ const PaymentPage = () => {
       }
       point = queryParams.point;
       objShippingFee = queryParams.shippingFee;
-    }
-
-    if (!vnpResponseCode) {
-      if (
-        !name ||
-        !phone ||
-        !provinceValSelected ||
-        !districtValSelected ||
-        !wardValSelected ||
-        !subAddress
-      ) {
-        showToast("Vui lòng nhập đầy đủ thông tin");
-        return;
-      }
+    } else {
+      if (!validateForm()) return;
 
       orderDetails = {
         payment_type_id: payment,
@@ -211,7 +302,7 @@ const PaymentPage = () => {
         to_ward_name: wardValSelected,
         to_district_name: districtValSelected,
         to_province_name: provinceValSelected,
-        cod_amount: payment == 1 ? 0 : totalOrder, // 1 là người bán đã trả tiền nên không cần thu thêm
+        cod_amount: payment == 1 ? 0 : totalOrder,
         content: "HEHEHE",
         weight: 200,
         length: 20,
@@ -321,7 +412,6 @@ const PaymentPage = () => {
     const getAddresses = async () => {
       if (user) {
         const listAddress = await getAddressById(user.id);
-
         setListAddress(listAddress.data);
       }
     };
@@ -333,21 +423,13 @@ const PaymentPage = () => {
       const url = window.location.href;
       console.log(url);
 
-      // Tạo đối tượng URL từ chuỗi URL
       const urlObj = new URL(url);
-
-      // Lấy các tham số từ chuỗi truy vấn
       const params = new URLSearchParams(urlObj.search);
-
-      // Chuyển các tham số thành một đối tượng JavaScript
       params.forEach((value, key) => {
         queryParams[key] = value;
       });
 
-      // Sử dụng thông tin từ queryParams
-      // const point = queryParams.point;
       const vnpResponseCode = queryParams?.vnp_ResponseCode;
-
       if (vnpResponseCode) {
         if (vnpResponseCode == "00") handleSubmit();
         else {
@@ -369,39 +451,52 @@ const PaymentPage = () => {
             <div className="text-lg font-bold">{t("user_info")}</div>
           </div>
           <div className="flex flex-col gap-4">
-            <input
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-              type="text"
-              className="w-full p-2 border rounded outline-primary border-line"
-              placeholder={t('full_name')+"*"}
-            />
-            <input
-              value={phone}
-              onChange={(e) => {
-                setPhone(e.target.value);
-              }}
-              type="text"
-              className="w-full p-2 border rounded outline-primary border-line"
-              placeholder={t('phone') + '*'}
-            />
-            <input
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
-              type="email"
-              className="w-full p-2 border rounded outline-primary border-line"
-              placeholder="Email*"
-            />
+            <div>
+              <input
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setErrors((prev) => ({ ...prev, name: "" }));
+                }}
+                onBlur={() => validateField("name", name)} // Validation khi rời chuột
+                type="text"
+                className="w-full p-2 border rounded outline-primary border-line"
+                placeholder={t("full_name") + "*"}
+              />
+              {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+            </div>
+            <div>
+              <input
+                value={phone}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  setErrors((prev) => ({ ...prev, phone: "" }));
+                }}
+                onBlur={() => validateField("phone", phone)} // Validation khi rời chuột
+                type="text"
+                className="w-full p-2 border rounded outline-primary border-line"
+                placeholder={t("phone") + "*"}
+              />
+              {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+            </div>
+            <div>
+              <input
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setErrors((prev) => ({ ...prev, email: "" }));
+                }}
+                onBlur={() => validateField("email", email)} // Validation khi rời chuột
+                type="email"
+                className="w-full p-2 border rounded outline-primary border-line"
+                placeholder="Email*"
+              />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+            </div>
             <div className="flex gap-x-2 items-center">
               <button
                 onClick={() => setSelectTypeAddress(2)}
-                className={`${
-                  selectTypeAddress == 2 && "bg-primary"
-                } py-1 flex-1 rounded border border-primary`}
+                className={`${selectTypeAddress == 2 && "bg-primary"} py-1 flex-1 rounded border border-primary`}
               >
                 {t("new_address")}
               </button>
@@ -413,9 +508,7 @@ const PaymentPage = () => {
                   }
                   setSelectTypeAddress(1);
                 }}
-                className={`${
-                  selectTypeAddress == 1 && "bg-primary"
-                } py-1 flex-1  rounded border border-primary`}
+                className={`${selectTypeAddress == 1 && "bg-primary"} py-1 flex-1 rounded border border-primary`}
               >
                 {t("existing_address")}
               </button>
@@ -424,76 +517,104 @@ const PaymentPage = () => {
               (listAddress.length > 0 ? (
                 <select
                   onChange={(e) => handleChangeAddress(e)}
-                  className="w-full p-2 border rounded outline-primary border-line "
+                  className="w-full p-2 border rounded outline-primary border-line"
                 >
-                  {listAddress?.map((item: any, index: number) => {
-                    return (
-                      <option
-                        key={index}
-                        value={item.id}
-                      >{`${item.subAddress}, ${item.wardValue}, ${item.districtValue}, ${item.provinceValue}`}</option>
-                    );
-                  })}
+                  {listAddress?.map((item: any, index: number) => (
+                    <option
+                      key={index}
+                      value={item.id}
+                    >{`${item.subAddress}, ${item.wardValue}, ${item.districtValue}, ${item.provinceValue}`}</option>
+                  ))}
                 </select>
               ) : (
-                  <p>{t("no_address_yet")}</p>
+                <p>{t("no_address_yet")}</p>
               ))}
             {selectTypeAddress == 2 && (
               <>
-                <select
-                  value={provinceIdSelected}
-                  onChange={(e) => onChangeProvince(e)}
-                  className="w-full p-2 border rounded outline-primary border-line "
-                >
-                  <option value="">{t("province_city")}</option>
-                  {listProvince?.map((province: any) => (
-                    <option
-                      key={province.ProvinceID}
-                      value={province.ProvinceID}
-                    >
-                      {province.ProvinceName}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={districtIdSelected}
-                  onChange={(e) => onChangeDistrict(e)}
-                  className="w-full p-2 border rounded outline-primary border-line "
-                >
-                  <option value="">{t("district")}</option>
-                  {listDistrict?.map((district: any) => (
-                    <option
-                      key={district.DistrictID}
-                      value={district.DistrictID}
-                    >
-                      {district.DistrictName}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={wardIdSelected}
-                  onChange={(e) => {
-                    setWardIdSelected(parseInt(e.target.value));
-                    setWardValSelected(
-                      e.target.options[e.target.selectedIndex].text
-                    );
-                  }}
-                  className="w-full p-2 border rounded outline-primary border-line "
-                >
-                  <option value="">{t("ward_commune")}</option>
-                  {listWard?.map((ward: any) => (
-                    <option key={ward.WardCode} value={ward.WardCode}>
-                      {ward.WardName}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  value={subAddress}
-                  onChange={(e) => setSubAddtress(e.target.value)}
-                  type="text"
-                  className="w-full p-2 border rounded outline-primary border-line"
-                  placeholder={t("street_house_number_required")}
-                />
+                <div>
+                  <select
+                    value={provinceIdSelected}
+                    onChange={(e) => onChangeProvince(e)}
+                    onBlur={() => {
+                      if (!provinceValSelected) {
+                        setErrors((prev) => ({ ...prev, province: t("province_required") }));
+                      }
+                    }} // Validation khi rời chuột
+                    className="w-full p-2 border rounded outline-primary border-line"
+                  >
+                    <option value="">{t("province_city")}</option>
+                    {listProvince?.map((province: any) => (
+                      <option
+                        key={province.ProvinceID}
+                        value={province.ProvinceID}
+                      >
+                        {province.ProvinceName}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.province && <p className="text-red-500 text-sm">{errors.province}</p>}
+                </div>
+                <div>
+                  <select
+                    value={districtIdSelected}
+                    onChange={(e) => onChangeDistrict(e)}
+                    onBlur={() => {
+                      if (!districtValSelected) {
+                        setErrors((prev) => ({ ...prev, district: t("district_required") }));
+                      }
+                    }} // Validation khi rời chuột
+                    className="w-full p-2 border rounded outline-primary border-line"
+                  >
+                    <option value="">{t("district")}</option>
+                    {listDistrict?.map((district: any) => (
+                      <option
+                        key={district.DistrictID}
+                        value={district.DistrictID}
+                      >
+                        {district.DistrictName}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.district && <p className="text-red-500 text-sm">{errors.district}</p>}
+                </div>
+                <div>
+                  <select
+                    value={wardIdSelected}
+                    onChange={(e) => {
+                      setWardIdSelected(parseInt(e.target.value));
+                      setWardValSelected(e.target.options[e.target.selectedIndex].text);
+                      setErrors((prev) => ({ ...prev, ward: "" }));
+                    }}
+                    onBlur={() => {
+                      if (!wardValSelected) {
+                        setErrors((prev) => ({ ...prev, ward: t("ward_required") }));
+                      }
+                    }} // Validation khi rời chuột
+                    className="w-full p-2 border rounded outline-primary border-line"
+                  >
+                    <option value="">{t("ward_commune")}</option>
+                    {listWard?.map((ward: any) => (
+                      <option key={ward.WardCode} value={ward.WardCode}>
+                        {ward.WardName}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.ward && <p className="text-red-500 text-sm">{errors.ward}</p>}
+                </div>
+                <div>
+                  <input
+                    value={subAddress}
+                    onChange={(e) => {
+                      setSubAddtress(e.target.value);
+                      setErrors((prev) => ({ ...prev, subAddress: "" }));
+                    }}
+                    onBlur={() => validateField("subAddress", subAddress)} // Validation khi rời chuột
+                    type="text"
+                    className="w-full p-2 border rounded outline-primary border-line"
+                    placeholder={t("street_house_number_required")}
+                  />
+                  {errors.subAddress && <p className="text-red-500 text-sm">{errors.subAddress}</p>}
+                </div>
               </>
             )}
             <textarea
@@ -586,20 +707,29 @@ const PaymentPage = () => {
               </p>
               <div className="flex justify-between items-center">
                 <div className="font-bold">{t("use_reward_points")}</div>
-
                 <div className="flex flex-col items-end gap-2">
                   <input
-                    onChange={(e) => setDiscount(parseInt(e.target.value) || 0)}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 0;
+                      setDiscount(value);
+                      setErrors((prev) => ({ ...prev, discount: "" }));
+                    }}
                     value={discount}
+                    onBlur={() => {
+                      if (discount < 0) {
+                        setErrors((prev) => ({ ...prev, discount: t("invalid_discount_points") }));
+                        showToast(t("invalid_discount_points"));
+                      } else if (discount > (user?.point || 0)) {
+                        setErrors((prev) => ({ ...prev, discount: t("not_enough_discount_points") }));
+                        showToast(t("not_enough_discount_points"));
+                      }
+                    }} // Validation khi rời chuột
                     inputMode="numeric"
                     pattern="[0-9]"
                     className="p-2 w-32 border rounded outline-primary border-line"
                     placeholder={t("you_have_points_input", { points: user?.point })}
                     onKeyDown={(event) => {
-                      const charCode = event.which
-                        ? event.which
-                        : event.keyCode;
-                      // Ngăn không cho nhập các ký tự không phải số và các phím điều khiển như Delete và Backspace
+                      const charCode = event.which ? event.which : event.keyCode;
                       if (
                         (charCode < 48 || charCode > 57) &&
                         charCode !== 8 &&
@@ -609,6 +739,7 @@ const PaymentPage = () => {
                       }
                     }}
                   />
+                  {errors.discount && <p className="text-red-500 text-sm">{errors.discount}</p>}
                 </div>
                 <div className="flex justify-end">
                   <button
@@ -619,7 +750,6 @@ const PaymentPage = () => {
                   </button>
                 </div>
               </div>
-
               <div className="flex justify-between text-3xl font-bold">
                 <div>{t("total")}</div>
                 <div className="text-primary">{totalOrder + shippingFee}đ</div>
@@ -631,9 +761,9 @@ const PaymentPage = () => {
               isLoading={loadingPaying}
               disabled={loadingPaying}
               onClick={() => !loadingPaying && handleSubmit()}
-              className="hover:text-white transition-all hover:bg-primary mt-10 text-[30px] px-4 py1 rounded-2xl border-primary border-2 text-primary"
+              className="hover:text-white transition-all hover:bg-primary mt-10 text-[30px] px-4 py-1 rounded-2xl border-primary border-2 text-primary"
             >
-              {t('place_order')}
+              {t("place_order")}
             </Button>
           </div>
         </div>
