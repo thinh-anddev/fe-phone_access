@@ -2,7 +2,7 @@ const apiAddress = import.meta.env.VITE_API_GHN_DEV + "/master-data";
 const token = import.meta.env.VITE_API_GHN_TOKEN;
 export const getListProvince =
   async (): // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Promise<any> => {
+    Promise<any> => {
     try {
       const res = await fetch(`${apiAddress}/province`, {
         method: "GET",
@@ -19,7 +19,8 @@ export const getListProvince =
 export const getListDistrict = async (
   provinceId: number
 ): // eslint-disable-next-line @typescript-eslint/no-explicit-any
-Promise<any> => {
+  Promise<any> => {
+  if (provinceId == 0) return;
   try {
     const res = await fetch(
       `${apiAddress}/district?province_id=${provinceId}`,
@@ -39,7 +40,9 @@ Promise<any> => {
 export const getListWard = async (
   districtId: number
 ): // eslint-disable-next-line @typescript-eslint/no-explicit-any
-Promise<any> => {
+  Promise<any> => {
+  if (districtId == 0) return;
+
   try {
     const res = await fetch(`${apiAddress}/ward?district_id=${districtId}`, {
       method: "GET",

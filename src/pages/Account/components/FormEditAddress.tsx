@@ -17,10 +17,10 @@ interface FormEditAddressProps {
 }
 
 const FormEditAddress: React.FC<FormEditAddressProps> = ({
-                                                           hide,
-                                                           update,
-                                                           address,
-                                                         }) => {
+  hide,
+  update,
+  address,
+}) => {
   const { t } = useTranslation();
   const { user } = useContext(LoginContext);
   const { showToast } = useContext(ToastContext);
@@ -83,13 +83,13 @@ const FormEditAddress: React.FC<FormEditAddressProps> = ({
 
   const editAddress = async () => {
     if (
-        !subAddress ||
-        !wardIdSelected ||
-        !wardValSelected ||
-        !districtIdSelected ||
-        !districtValSelected ||
-        !provinceIdSelected ||
-        !provinceValSelected
+      !subAddress ||
+      !wardIdSelected ||
+      !wardValSelected ||
+      !districtIdSelected ||
+      !districtValSelected ||
+      !provinceIdSelected ||
+      !provinceValSelected
     ) {
       showToast(t("fill_address_completely"));
       return;
@@ -153,74 +153,74 @@ const FormEditAddress: React.FC<FormEditAddressProps> = ({
   }, [listWard]);
 
   return (
-      <>
-        <div
-            onClick={hide}
-            className="fixed z-[1] w-screen h-screen top-0 left-0 bg-black/30"
-        ></div>
-        <div className="flex gap-4 flex-col p-4 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2] bg-slate-300 w-[400px]">
-          <p className="text-2xl">{t("add_new_address")}</p>
-          <input
-              className="p-2 border rounded"
-              type="text"
-              placeholder={t("street_house_number")}
-              value={subAddress || address.subAddress}
-              onChange={(e) => setSubAddress(e.target.value)}
-          />
-          <select
-              id="province"
-              onChange={onChangeProvince}
-              className="p-2 rounded border"
-          >
-            <option value="">{t("province_city")}</option>
-            {listProvince.map((province: any) => (
-                <option key={province.ProvinceID} value={province.ProvinceID}>
-                  {province.ProvinceName}
-                </option>
-            ))}
-          </select>
-          <select
-              id="district"
-              onChange={onChangeDistrict}
-              className="p-2 rounded border"
-          >
-            <option value="">{t("district")}</option>
-            {listDistrict.map((district: any) => (
-                <option key={district.DistrictID} value={district.DistrictID}>
-                  {district.DistrictName}
-                </option>
-            ))}
-          </select>
-          <select
-              id="ward"
-              defaultValue={wardIdSelected}
-              onChange={handleChangeWard}
-              className="p-2 rounded border"
-          >
-            <option value="">{t("ward_commune")}</option>
-            {listWard.map((ward: any) => (
-                <option key={ward.WardCode} value={ward.WardCode}>
-                  {ward.WardName}
-                </option>
-            ))}
-          </select>
+    <>
+      <div
+        onClick={hide}
+        className="fixed z-[1] w-screen h-screen top-0 left-0 bg-black/30"
+      ></div>
+      <div className="flex gap-4 flex-col p-4 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2] bg-slate-300 w-[400px]">
+        <p className="text-2xl">{t("add_new_address")}</p>
+        <input
+          className="p-2 border rounded"
+          type="text"
+          placeholder={t("street_house_number")}
+          value={subAddress || address.subAddress}
+          onChange={(e) => setSubAddress(e.target.value)}
+        />
+        <select
+          id="province"
+          onChange={onChangeProvince}
+          className="p-2 rounded border"
+        >
+          <option value="">{t("province_city")}</option>
+          {listProvince.map((province: any) => (
+            <option key={province.ProvinceID} value={province.ProvinceID}>
+              {province.ProvinceName}
+            </option>
+          ))}
+        </select>
+        <select
+          id="district"
+          onChange={onChangeDistrict}
+          className="p-2 rounded border"
+        >
+          <option value="">{t("district")}</option>
+          {listDistrict.map((district: any) => (
+            <option key={district.DistrictID} value={district.DistrictID}>
+              {district.DistrictName}
+            </option>
+          ))}
+        </select>
+        <select
+          id="ward"
+          defaultValue={wardIdSelected}
+          onChange={handleChangeWard}
+          className="p-2 rounded border"
+        >
+          <option value="">{t("ward_commune")}</option>
+          {listWard.map((ward: any) => (
+            <option key={ward.WardCode} value={ward.WardCode}>
+              {ward.WardName}
+            </option>
+          ))}
+        </select>
 
-          <div className="flex gap-x-2">
-            <Button
-                onClick={hide}
-                className="flex-1 py-1 border rounded hover:border-black"
-            >
-              {t("no")}
-            </Button>
-            <Button
-                onClick={editAddress}
-                className="flex-1 py-1 rounded bg-primary hover:bg-white"
-            >
-              {t("add")}
-            </Button>
-          </div>
+        <div className="flex gap-x-2">
+          <Button
+            onClick={hide}
+            className="flex-1 py-1 border rounded hover:border-black"
+          >
+            {t("no")}
+          </Button>
+          <Button
+            onClick={editAddress}
+            className="flex-1 py-1 rounded bg-primary hover:bg-white"
+          >
+            {t("add")}
+          </Button>
         </div>
-      </>
+      </div>
+    </>
   );
 };
 
