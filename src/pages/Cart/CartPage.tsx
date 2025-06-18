@@ -85,11 +85,11 @@ const CartPage = () => {
   };
 
   return (
-      <CartPageContext.Provider value={value}>
-        <div>
-          <section className="mx-auto mt-10 overflow-auto max-w-7xl">
-            <table className="w-full table-fixed min-w-[1200px]">
-              <thead>
+    <CartPageContext.Provider value={value}>
+      <div>
+        <section className="mx-auto mt-10 overflow-auto max-w-7xl">
+          <table className="w-full table-fixed min-w-[1200px]">
+            <thead>
               <tr className="border-2 border-solid ">
                 <th className="py-2 w-[50px]"></th>
                 <th className="py-2 font-extrabold ">{t('product')}</th>
@@ -101,50 +101,50 @@ const CartPage = () => {
                 <th className="py-2 font-extrabold">{t('total')}</th>
                 <th className="py-2 font-extrabold"></th>
               </tr>
-              </thead>
-              <tbody>
+            </thead>
+            <tbody>
               {cart.map((item) => {
                 return (
-                    <CartRow
-                        cartDetail={item}
-                        listItem={itemsSelected}
-                        handleSelect={setItemsSelected}
-                    />
+                  <CartRow
+                    cartDetail={item}
+                    listItem={itemsSelected}
+                    handleSelect={setItemsSelected}
+                  />
                 );
               })}
-              </tbody>
-            </table>
-          </section>
-          <section>
-            <div className="flex justify-end mt-10 max-w-7xl">
-              <div className="flex flex-col items-end gap-5">
-                <div className="flex justify-between gap-20">
-                  <div className="text-3xl font-extrabold text-primary ">
-                    {t('provisional')}
-                  </div>
-                  <div className="text-3xl font-extrabold text-primary ">
-                    {formatPrice(total)}
-                  </div>
+            </tbody>
+          </table>
+        </section>
+        <section>
+          <div className="flex justify-end mt-10 max-w-7xl">
+            <div className="flex flex-col items-end gap-5">
+              <div className="flex justify-between gap-20">
+                <div className="text-3xl font-extrabold text-primary ">
+                  {t('provisional')}
                 </div>
-                <div className="flex gap-4">
-                  <button
-                      onClick={() => navigateTo("/")}
-                      className="px-10 py-3 text-xl font-extrabold text-white duration-300 rounded-full bg-primary hover:bg-purple-500"
-                  >
-                    {t('continue_shopping')}
-                  </button>
-                  <button
-                      onClick={handlePay}
-                      className="px-10 py-3 text-xl font-extrabold duration-300 border-2 border-solid rounded-full border-primary text-primary hover:bg-purple-500 hover:text-white"
-                  >
-                    {t('payment_method')}
-                  </button>
+                <div className="text-3xl font-extrabold text-primary ">
+                  {formatPrice(total)}
                 </div>
               </div>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => navigateTo("/")}
+                  className="px-10 py-3 text-xl font-extrabold text-white duration-300 rounded-full bg-primary hover:bg-purple-500"
+                >
+                  {t('continue_shopping')}
+                </button>
+                <button
+                  onClick={handlePay}
+                  className="px-10 py-3 text-xl font-extrabold duration-300 border-2 border-solid rounded-full border-primary text-primary hover:bg-purple-500 hover:text-white"
+                >
+                  {t('payment_method')}
+                </button>
+              </div>
             </div>
-          </section>
-          <section className="flex flex-col items-center mx-auto mt-16 max-w-7xl gap-7">
-            {/* <div className="text-3xl font-black">Các sản phẩm đã xem</div>
+          </div>
+        </section>
+        <section className="flex flex-col items-center mx-auto mt-16 max-w-7xl gap-7">
+          {/* <div className="text-3xl font-black">Các sản phẩm đã xem</div>
         <div className="grid gap-12 my-6 xl:grid-cols-5 md:grid-cols-2 sm:grid-cols-2 ">
           <ProductCard />
           <ProductCard />
@@ -153,9 +153,9 @@ const CartPage = () => {
           <ProductCard />
           <ProductCard />
         </div> */}
-          </section>
-        </div>
-      </CartPageContext.Provider>
+        </section>
+      </div>
+    </CartPageContext.Provider>
   );
 };
 export default CartPage;
