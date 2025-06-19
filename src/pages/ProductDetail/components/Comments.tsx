@@ -2,6 +2,7 @@ import { useState, useEffect, useContext, ChangeEvent } from "react";
 import { LoginContext } from "@/hooks/LoginStatus/LoginContext";
 import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
 import { addComment, getCommentsByProduct } from "../api/comments";
+import { useTranslation } from "react-i18next"; // ⬅️ Thêm dòng này
 
 interface Comment {
     id: number;
@@ -11,17 +12,12 @@ interface Comment {
     createdAt: string;
 }
 
-interface PageResponse {
-    content: Comment[];
-    totalPages: number;
-    number: number;
-}
-
 interface CommentsProps {
     productId: number;
 }
 
 const Comments: React.FC<CommentsProps> = ({ productId }) => {
+    const { t } = useTranslation(); // ⬅️ Hook dịch
     const { user } = useContext(LoginContext);
     const { showToast } = useContext(ToastContext);
     const [comments, setComments] = useState<Comment[]>([]);
@@ -31,16 +27,13 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
 
     const fetchComments = async () => {
         try {
-            console.log(productId);
-
             const response = await getCommentsByProduct(productId, page);
             if (response.success) {
                 setComments(response.data.content);
                 setTotalPages(response.data.totalPages);
-            } else {
             }
         } catch (error) {
-            showToast("Lỗi khi tải bình luận!");
+            showToast(t("comments.fetch_error"));
         }
     };
 
@@ -50,11 +43,11 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
 
     const handleSubmitComment = async () => {
         if (!user) {
-            showToast("Vui lòng đăng nhập để bình luận!");
+            showToast(t("comments.login_to_comment"));
             return;
         }
         if (!newComment.trim()) {
-            showToast("Bình luận không được để trống!");
+            showToast(t("comments.empty_comment_warning"));
             return;
         }
 
@@ -63,12 +56,12 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
             if (response.success) {
                 setComments([response.data, ...comments]);
                 setNewComment("");
-                showToast("Bình luận đã được gửi!");
+                showToast(t("comments.comment_success"));
             } else {
                 showToast(response.message);
             }
         } catch (error) {
-            showToast("Lỗi khi gửi bình luận!");
+            showToast(t("comments.submit_error"));
         }
     };
 
@@ -84,13 +77,13 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
 
     return (
         <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-4">Bình luận</h3>
+            <h3 className="text-xl font-semibold mb-4">{t("comments.title")}</h3>
             {user ? (
                 <div className="mb-6">
                     <textarea
                         value={newComment}
                         onChange={handleChange}
-                        placeholder="Viết bình luận của bạn..."
+                        placeholder={t("comments.placeholder")}
                         className="w-full p-3 border border-gray-300 rounded-md resize-y focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition"
                         rows={4}
                     />
@@ -98,17 +91,21 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
                         onClick={handleSubmitComment}
                         className="mt-2 bg-purple-500 text-white py-2 px-4 rounded-md hover:bg-purple-600 transition"
                     >
-                        Gửi bình luận
+                        {t("comments.submit")}
                     </button>
                 </div>
             ) : (
                 <p className="text-gray-600 mb-6">
-                    Vui lòng <a href="/user" className="text-purple-500 hover:underline">đăng nhập</a> để bình luận.
+                    {t("comments.login_prompt")}{" "}
+                    <a href="/user" className="text-purple-500 hover:underline">
+                        {t("comments.login_link")}
+                    </a>
+                    .
                 </p>
             )}
             <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
                 {comments.length === 0 ? (
-                    <p className="text-gray-500">Chưa có bình luận nào.</p>
+                    <p className="text-gray-500">{t("comments.no_comments")}</p>
                 ) : (
                     comments.map((comment) => (
                         <div key={comment.id} className="flex gap-3 border-b border-gray-200 pb-3">
@@ -135,14 +132,16 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
                         disabled={page === 0}
                         className="mx-1 px-3 py-1 bg-gray-200 rounded-md disabled:opacity-50"
                     >
-                        Trước
+                        {t("comments.prev")}
                     </button>
                     {[...Array(totalPages)].map((_, index) => (
                         <button
                             key={index}
                             onClick={() => handlePageChange(index)}
-                            className={`mx-1 px-3 py-1 rounded-md ${page === index ? "bg-purple-500 text-white" : "bg-gray-200"
-                                }`}
+                            className={`mx-1 px-3 py-1 rounded-md ${page === index
+                                ? "bg-purple-500 text-white"
+                                : "bg-gray-200"
+                            }`}
                         >
                             {index + 1}
                         </button>
@@ -152,7 +151,7 @@ const Comments: React.FC<CommentsProps> = ({ productId }) => {
                         disabled={page === totalPages - 1}
                         className="mx-1 px-3 py-1 bg-gray-200 rounded-md disabled:opacity-50"
                     >
-                        Sau
+                        {t("comments.next")}
                     </button>
                 </div>
             )}
