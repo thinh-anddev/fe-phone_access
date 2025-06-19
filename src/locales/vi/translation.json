@@ -307,5 +307,8 @@
     "verifyCodeTitle": "Nhập mã xác thực",
     "verifyBtn": "Xác thực",
     "passwordMismatch": "Mật khẩu không trùng khớp!",
-    "invalidVerifyCode": "Mã xác thực không hợp lệ"
+    "invalidVerifyCode": "Mã xác thực không hợp lệ",
+    "overview": "Tổng quan",
+    "fail": "Thất bại"
+
 }

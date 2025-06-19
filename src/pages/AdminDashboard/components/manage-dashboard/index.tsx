@@ -468,7 +468,7 @@ const ManageDashboard: React.FC<ManageDashboardProps> = (props) => {
         />
       )}
       {showAdd && <FormAdd hide={() => setShowAdd(false)} />}
-      <div className="text-[25px]">{"Quản lý " + subjectName}</div>
+      <div className="text-[25px]">{t("manage") +" " + subjectName}</div>
       <div className="flex items-center justify-end gap-2">
         {/* <input
           type="search"
