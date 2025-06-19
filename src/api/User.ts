@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import i18n from 'i18next';
 export const getAuthHeader = () => {
     const token = localStorage.getItem("token");
     return {
@@ -16,7 +16,7 @@ export const getAllAccounts = async () => {
         if (response.data.status === "ok") {
             return { success: true, users: response.data.data };
         } else {
-            return { success: false, message: "Không lấy được danh sách người dùng" };
+            return { success: false, message: i18n.t("account.getAllError") };
         }
     } catch (error: any) {
         return { success: false, message: error.message };
@@ -33,7 +33,7 @@ export const setAdminRole = async (userId: number) => {
         if (response.data.status === "ok") {
             return { success: true };
         } else {
-            return { success: false, message: "Cập nhật quyền thất bại" };
+            return { success: false, message: i18n.t("account.setAdminRoleError") };
         }
     } catch (error: any) {
         return { success: false, message: error.message };
@@ -49,7 +49,7 @@ export const deleteUser = async (userId: number) => {
         if (response.data.status === "ok") {
             return { success: true };
         } else {
-            return { success: false, message: "Xoá người dùng thất bại" };
+            return { success: false, message: i18n.t("account.deleteUserError") };
         }
     } catch (error: any) {
         return { success: false, message: error.message };
@@ -70,7 +70,7 @@ export const updateUserRole = async (userId: number, role: number) => {
         if (response.data.status === "ok") {
             return { success: true };
         } else {
-            return { success: false, message: "Cập nhật quyền thất bại" };
+            return { success: false, message: i18n.t("account.updateRoleError") };
         }
     } catch (error: any) {
         return { success: false, message: error.message };
@@ -92,7 +92,7 @@ export const updateUserStatus = async (userId: number, status: number) => {
         if (response.data.status === "ok") {
             return { success: true };
         } else {
-            return { success: false, message: "Cập nhật trạng thái thất bại" };
+            return { success: false, message: i18n.t("account.updateStatusError") };
         }
     } catch (error: any) {
         return { success: false, message: error.message };

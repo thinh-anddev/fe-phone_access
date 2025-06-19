@@ -1,4 +1,5 @@
 import axios from "axios";
+import i18n from "i18next";
 
 export const resetPassword = async (email: string, code: string, newPassword: string) => {
     try {
@@ -9,13 +10,13 @@ export const resetPassword = async (email: string, code: string, newPassword: st
             verifyCode: code,
         });
         if(res.status == 200) {
-            return {status: "ok", message: "Đổi mật khẩu thành công"};
+            return {status: "ok", message: i18n.t("success_change_pass")};
         } else {
-            return {status: "failed", message: "Cannot send email"};
+            return {status: "failed", message: i18n.t("failed_change_pass")};
         }
     } catch (error) {
         console.log(error);
-        return {status: "failed", message: "Cannot send email"};
+        return {status: "failed", message: i18n.t("failed_change_pass")};
         
     }
 }

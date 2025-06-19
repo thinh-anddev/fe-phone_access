@@ -1,4 +1,5 @@
 import axios from "axios";
+import i18n from 'i18next';
 
 // interface Contact {
 //     id: number;
@@ -19,14 +20,13 @@ const addContact = async (body: { fullName: string; email: string; content: stri
             },
         );
         if (res.data.status === "ok") {
-            return { message: "Gửi liên hệ thành công", data: res.data };
+            return { message: i18n.t("send_success"), data: res.data };
         } else {
-            return { message: "Gửi liên hệ thất bại", data: res.data.data };
+            return { message: i18n.t("send_failed"), data: res.data.data };
         }
-
     } catch (error) {
         console.log(error);
-        return { message: "Gửi liên hệ thất bại" };
+        return { message: i18n.t("send_failed") };
     }
 };
 

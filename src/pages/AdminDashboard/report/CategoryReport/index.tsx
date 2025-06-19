@@ -1,8 +1,10 @@
 import { getAllYears, getRevenueByCategory } from "@/api/Order";
 import { useEffect, useState } from "react";
 import Chart from "./Chart";
+import { useTranslation } from "react-i18next";
 
 const CategoryReport = () => {
+  const { t } = useTranslation();
   const [seri, setSeri] = useState<number[]>([]);
   const [labs, setLabs] = useState<string[]>([]);
   const [years, setYears] = useState<number[]>([]);
@@ -13,18 +15,18 @@ const CategoryReport = () => {
     new Date().getFullYear()
   );
   const months = [
-    "Tháng 01",
-    "Tháng 02",
-    "Tháng 03",
-    "Tháng 04",
-    "Tháng 05",
-    "Tháng 06",
-    "Tháng 07",
-    "Tháng 08",
-    "Tháng 09",
-    "Tháng 10",
-    "Tháng 11",
-    "Tháng 12",
+    t("month_01"),
+    t("month_02"),
+    t("month_03"),
+    t("month_04"),
+    t("month_05"),
+    t("month_06"),
+    t("month_07"),
+    t("month_08"),
+    t("month_09"),
+    t("month_10"),
+    t("month_11"),
+    t("month_12"),
   ];
 
   const getYears = async () => {
@@ -58,7 +60,7 @@ const CategoryReport = () => {
   return (
     <div className="flex flex-col w-1/2 gap-5 p-8 rounded shadow-lg h-fit">
       <div className="flex justify-between">
-        <div>Thống kê</div>
+        <div>{t("statistic")}</div>
         <div>
           <select
             name="month"

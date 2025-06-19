@@ -7,6 +7,7 @@ import addProduct from "../../api/addProduct";
 import { submitData } from "@/api/PinFileToIpfs";
 import deleteProduct from "../../api/deleteProdct";
 import { ProductType } from "@/utils/models.ts";
+import { useTranslation } from "react-i18next";
 
 interface ManageDashboardProps {
   subjectName: string;
@@ -32,14 +33,16 @@ const Row: React.FC<RowProps> = ({
     setShowEdit(true);
     setEditingProduct(item);
   };
+  const { t } = useTranslation();
 
   const handleDelete = async (item: any) => {
     console.log(item.id);
 
+
     const res = await deleteProduct(item.id);
     if (res.success) {
       updateList();
-    } else showToast("Xoá thất bại");
+    }showToast(t("delete_failed"))
   };
 
   return (
@@ -112,14 +115,16 @@ const FormEdit: React.FC<FormEditProps> = ({ item, hide, updateList }) => {
   const handleSubmit = async () => {
     updateProduct(formData);
     updateList();
-    showToast("Product editted successfully");
+    showToast(t("edit_success"))
     hide();
   };
+  const { t } = useTranslation();
+
 
   return (
     <div className="fixed z-10 inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg w-1/2">
-        <h2 className="text-2xl mb-4">Edit Product</h2>
+        <h2 className="text-2xl mb-4">{t("edit")}</h2>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
             Name
@@ -181,11 +186,11 @@ const FormEdit: React.FC<FormEditProps> = ({ item, hide, updateList }) => {
         </div>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
-            Sold
+            {t("sold")}
           </label>
           <input
             type="number"
-            name="sold"
+            name={t("sold")}
             value={formData.sold}
             onChange={handleChange}
             className="mt-1 block w-full border border-gray-300 rounded-md p-2"
@@ -193,11 +198,11 @@ const FormEdit: React.FC<FormEditProps> = ({ item, hide, updateList }) => {
         </div>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
-            Category ID
+            {t("category")} ID
           </label>
           <input
             type="number"
-            name="categoryId"
+            name="Category ID"
             value={formData.category.id}
             onChange={handleChange}
             className="mt-1 block w-full border border-gray-300 rounded-md p-2"
@@ -205,7 +210,7 @@ const FormEdit: React.FC<FormEditProps> = ({ item, hide, updateList }) => {
         </div>
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">
-            Status
+            {t("status")}
           </label>
           <input
             type="number"
@@ -220,13 +225,13 @@ const FormEdit: React.FC<FormEditProps> = ({ item, hide, updateList }) => {
             onClick={hide}
             className="mr-2 bg-gray-300 text-gray-700 py-2 px-4 rounded-md"
           >
-            Cancel
+            {t("cancel")}
           </button>
           <button
             onClick={handleSubmit}
             className="bg-blue-500 text-white py-2 px-4 rounded-md"
           >
-            Save
+            {t("save")}
           </button>
         </div>
       </div>
@@ -240,7 +245,7 @@ interface FormAddProps {
 
 const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
   const initialFormData: ProductFormData = {
-    id: 0, // ID sẽ được tạo tự động
+    id: 0,
     name: "",
     description: "",
     price: 0,
@@ -306,11 +311,13 @@ const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
     newFiles[index] = e.target.files;
     setFiles(newFiles);
   };
+  const { t } = useTranslation();
+
 
   return (
     <div className="fixed z-10 inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg w-1/2 max-h-[80vh] overflow-y-auto">
-        <h2 className="text-2xl mb-4 font-bold">Add Product</h2>
+        <h2 className="text-2xl mb-4 font-bold">{t("add")}</h2>
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-4">
             {files.map((_, index) => (
@@ -324,7 +331,7 @@ const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name
+              {t("product_name")}
             </label>
             <input
               type="text"
@@ -336,7 +343,7 @@ const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
+              {t("description")}
             </label>
             <textarea
               name="description"
@@ -348,7 +355,7 @@ const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Price
+              {t("price")}
             </label>
             <input
               type="number"
@@ -360,7 +367,7 @@ const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Discount
+              {t("discount")}
             </label>
             <input
               type="number"
@@ -372,7 +379,7 @@ const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Quantity
+              {t("quantity")}
             </label>
             <input
               type="number"
@@ -384,7 +391,7 @@ const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Sold
+              {t("sold")}
             </label>
             <input
               type="number"
@@ -396,7 +403,7 @@ const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Category ID
+              {t("category")} ID
             </label>
             <input
               type="number"
@@ -408,7 +415,7 @@ const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
           </div>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Status
+              {t("status")}
             </label>
             <input
               type="number"
@@ -423,13 +430,13 @@ const FormAdd: React.FC<FormAddProps> = ({ hide }) => {
               onClick={hide}
               className="bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 transition"
             >
-              Cancel
+              {t("cancel")}
             </button>
             <button
               onClick={handleSubmit}
               className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition"
             >
-              Save
+              {t("save")}
             </button>
           </div>
         </div>
@@ -443,6 +450,7 @@ const ManageDashboard: React.FC<ManageDashboardProps> = (props) => {
   const [showAdd, setShowAdd] = useState(false);
   const [editingProduct, setEditingProduct] = useState<ProductType | undefined>();
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const { t } = useTranslation();
 
   const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -475,7 +483,7 @@ const ManageDashboard: React.FC<ManageDashboardProps> = (props) => {
           <input
             type="search"
             className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:ring-2 focus:ring-primary focus:border-primary outline-none"
-            placeholder="Tìm kiếm đơn hàng..."
+            placeholder={t("search_orders")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleSearchKeyPress}
@@ -485,7 +493,7 @@ const ManageDashboard: React.FC<ManageDashboardProps> = (props) => {
           onClick={() => setShowAdd(true)}
           className="focus:outline-none text-white bg-primary hover:bg-purple-800 font-medium rounded-lg text-base px-4 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-300"
         >
-          Thêm
+          {t("add")}
         </button>
       </div>
       <div className="flex flex-col gap-3">
@@ -493,12 +501,12 @@ const ManageDashboard: React.FC<ManageDashboardProps> = (props) => {
           <thead>
             <tr>
               <th className="px-4 w-20"></th>
-              <th className="px-4 w-40">Tên</th>
-              <th className="px-4 w-10">Giá</th>
-              <th className="px-4">Mô tả</th>
-              <th className="px-4 w-10">Số lượng</th>
-              <th className="px-4 w-10">Đã bán</th>
-              <th className="px-4 w-10">Trạng thái</th>
+              <th>{t("product_name")}</th>
+              <th>{t("price")}</th>
+              <th>{t("description")}</th>
+              <th>{t("quantity")}</th>
+              <th>{t("sold")}</th>
+              <th>{t("status")}</th>
               <th></th>
               <th></th>
             </tr>

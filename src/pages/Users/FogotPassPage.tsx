@@ -4,6 +4,7 @@ import { sendNewPassWord } from "./api/sendNewPassword";
 import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
 import { Button } from "@chakra-ui/react";
 import { resetPassword } from "./api/resetPassword";
+import { useTranslation } from "react-i18next";
 
 const ForgotPassPage = () => {
   const [isValidForgotPass, setIsValidForgotPass] = useState(false);
@@ -14,12 +15,13 @@ const ForgotPassPage = () => {
   const [phase, setPhase] = useState(1);
   const [code, setCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const { t } = useTranslation();
 
   const handleSendNewPassword = async () => {
     setIsLoading(true);
     const res = await sendNewPassWord(email);
     if (res.success) {
-      showToast("Mã OTP đã gửi đến mail của bạn");
+      showToast(t("otpSent"));
       setPhase(2);
     } else {
       showToast(res.message);
@@ -49,10 +51,10 @@ const ForgotPassPage = () => {
           }}
           className="cursor-pointer absolute top-1/2 left-2 -translate-y-1/2 text-gray-400 hover:text-blue-400 underline"
         >
-          Back
+          {t("back")}
         </p>
         <p className="text-center p-2 border-b-2 border-primary text-primary">
-          Quên mật khẩu
+          {t("forgot_pass")}
         </p>
       </div>
       <div className="flex flex-col gap-y-3 p-3">
@@ -65,7 +67,7 @@ const ForgotPassPage = () => {
               }}
               className="border border-line rounded p-2"
               type="text"
-              placeholder="Nhập email đăng nhập của bạn (*)"
+              placeholder={t("enterEmail")}
             />
             <Button
               isLoading={isLoading}
@@ -75,7 +77,7 @@ const ForgotPassPage = () => {
                 !isValidForgotPass && "!bg-gray-400"
               }`}
             >
-              Gửi
+              {t("send")}
             </Button>
           </>
         )}
@@ -98,7 +100,7 @@ const ForgotPassPage = () => {
                 }}
                 className="border border-line rounded p-2"
                 type="password"
-                placeholder="Nhập mật khẩu mới (*)"
+                placeholder={t("enterNewPass")}
               />
             </div>
             <Button
@@ -109,7 +111,7 @@ const ForgotPassPage = () => {
                 !isValidForgotPass && "!bg-gray-400"
               }`}
             >
-              Gửi
+              {t("send")}
             </Button>
           </>
         )}

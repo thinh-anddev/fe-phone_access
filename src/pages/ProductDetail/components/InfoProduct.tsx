@@ -167,9 +167,9 @@ const InfoProduct: React.FC<ProductProps> = ({ product }) => {
           >
             {t("add_to_cart")}
           </button>
-          <button className="flex-1 py-3 rounded bg-purple-500 hover:bg-purple-600 text-white font-medium transition">
-            {t("buy_now")}
-          </button>
+          {/*<button className="flex-1 py-3 rounded bg-purple-500 hover:bg-purple-600 text-white font-medium transition">*/}
+          {/*  {t("buy_now")}*/}
+          {/*</button>*/}
         </div>
         <Comments productId={product.id} />
       </div>

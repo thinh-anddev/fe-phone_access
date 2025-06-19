@@ -1,5 +1,6 @@
 import axios from "axios"
 import {getAuthHeader} from "@/api/Order.ts";
+import i18n from "i18next";
 
 export const sendNewPassWord = async (email: string) => {
     try {
@@ -9,9 +10,9 @@ export const sendNewPassWord = async (email: string) => {
         if(res.status == 200) {
             return { success: true, message: "Ok", data: res.data };
         } else {
-            return { success: false, message: "Email not found" };
+            return { success: false, message: i18n.t("emailNotFound") };
         }
     } catch (error) {
-     return { success: false, message: "Email not found" };
+     return { success: false, message: i18n.t("emailNotFound") };
     }
 }

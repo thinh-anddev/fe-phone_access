@@ -11,7 +11,7 @@ export const getCarts = async () => {
     if (response.data.status === "ok") {
       return { success: true, data: response.data.data };
     } else {
-      return { success: false, message: "Cannot get cart of this user" };
+      return { success: false, message: "cannot_get_cart" };
     }
   } catch (error: any) {
     return { success: false, message: error.message };
@@ -33,7 +33,7 @@ export const updateCarts = async (id: number, quantity: number) => {
 
       return { success: true, data: response.data.data };
     } else {
-      return { success: false, message: "Cannot update this cart" };
+      return { success: false, message: "cannot_update_cart" };
     }
   } catch (error: any) {
     return { success: false, message: error.message };
@@ -50,7 +50,7 @@ export const deleteCartDetail = async (id: number) => {
     if (response.data.status === "ok") {
       return { success: true, data: response.data.data };
     } else {
-      return { success: false, message: "Cannot delete this cart" };
+      return { success: false, message: "cannot_delete_cart" };
     }
   } catch (error: any) {
     return { success: false, message: error.message };
@@ -68,7 +68,7 @@ export const insertNewCartDetail = async (cartDetail: any) => {
     if (response.data.status === "ok") {
       return { success: true, data: response.data.data };
     } else {
-      return { success: false, message: "Cannot insert" };
+      return { success: false, message: "cannot_insert_cart" };
     }
   } catch (error: any) {
     return { success: false, message: error.message };

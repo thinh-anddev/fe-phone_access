@@ -1,5 +1,6 @@
 import axios from "axios";
-import {getAuthHeader} from "@/api/Order.ts";
+import { getAuthHeader } from "@/api/Order.ts";
+import i18n from "i18next";
 
 const updateAddress = async (body: any) => {
     try {
@@ -17,13 +18,17 @@ const updateAddress = async (body: any) => {
             customer: {
                 id: body.customerId
             }
-        },
-            { headers: getAuthHeader() })
-        return { message: "Update address successfully", data: res.data.data }
+        }, {
+            headers: getAuthHeader()
+        });
+        return {
+            message: i18n.t("update_address_success"),
+            data: res.data.data
+        };
     } catch (error) {
         console.log(error);
-        return { message: "Fail to update address" }
+        return { message: i18n.t("update_address_failed") };
     }
-}
+};
 
 export default updateAddress;

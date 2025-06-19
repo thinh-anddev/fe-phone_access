@@ -1,9 +1,12 @@
 import axios from "axios";
+import i18n from 'i18next';
+
 export const getAuthHeader = () => {
   const token = localStorage.getItem("token");
   return {
     Authorization: token ? `Bearer ${token}` : "",
   };
+
 };
 export const getAllOrders = async () => {
   try {
@@ -14,7 +17,7 @@ export const getAllOrders = async () => {
     if (response.data.status == "ok") {
       return { success: true, orders: response.data.data };
     } else {
-      return { success: false, message: "Cannot get all orders" };
+      return { success: false, message: i18n.t("order.getAllError") };
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -30,7 +33,7 @@ export const getAllYears = async () => {
     if (response.data.status == "ok") {
       return { success: true, data: response.data.data };
     } else {
-      return { success: false, message: "Cannot get all years" };
+      return { success: false, message: i18n.t("order.getAllYearsError") };
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -46,7 +49,7 @@ export const getRevenueInYear = async (year: number) => {
     if (response.data.status == "ok") {
       return { success: true, data: response.data.data };
     } else {
-      return { success: false, message: "Cannot get all years" };
+      return { success: false, message: i18n.t("order.getRevenueByYearError") };
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -63,7 +66,7 @@ export const getRevenueByCategory = async (month: number, year: number) => {
     if (response.data.status == "ok") {
       return { success: true, data: response.data.data };
     } else {
-      return { success: false, message: "Cannot get all years" };
+      return { success: false, message: i18n.t("order.getRevenueByCategoryError") };
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -80,7 +83,7 @@ export const getByCustomer = async (idCustomer: number) => {
     if (response.data.status == "ok") {
       return { success: true, data: response.data.data };
     } else {
-      return { success: false, message: "Cannot get all years" };
+      return { success: false, message: i18n.t("order.getByCustomerError")};
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -97,7 +100,7 @@ export const cancel = async (orderId: number) => {
     if (response.data.status == "ok") {
       return { success: true, data: response.data.data };
     } else {
-      return { success: false, message: "Cannot get all years" };
+      return { success: false, message: i18n.t("order.cancelError") };
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
@@ -114,7 +117,7 @@ export const update = async (orderId: number, status: number) => {
     if (response.data.status == "ok") {
       return { success: true, data: response.data.data };
     } else {
-      return { success: false, message: "Cannot get all years" };
+      return { success: false, message: i18n.t("order.updateError") };
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {

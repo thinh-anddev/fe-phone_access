@@ -1,5 +1,6 @@
 import { getAuthHeader } from "@/api/Order";
 import axios from "axios";
+import i18n from 'i18next';
 
 const deleteContact = async (id: number) => {
     try {
@@ -8,7 +9,7 @@ const deleteContact = async (id: number) => {
         return { success: true, message: "ok", data: res.data.data };
     } catch (error) {
         console.log(error);
-        return { success: false, message: "Xóa liên hệ thất bại", data: null };
+        return { success: false, message: i18n.t("delete_failed"), data: null };
     }
 };
 export { deleteContact };

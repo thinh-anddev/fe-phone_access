@@ -184,13 +184,13 @@ const PaymentPage = () => {
     const newErrors = { ...errors };
     switch (fieldName) {
       case "name":
-        if (!value.trim()) newErrors.name = t("name_required");
+        if (!value.trim()) newErrors.name = t("full_name_required");
         else newErrors.name = "";
         break;
       case "phone":
         const phoneRegex = /^0[0-9]{9,10}$/;
         if (!value.trim()) newErrors.phone = t("phone_required");
-        else if (!phoneRegex.test(value)) newErrors.phone = t("invalid_phone_format");
+        else if (!phoneRegex.test(value)) newErrors.phone = t("invalid_phone");
         else newErrors.phone = "";
         break;
       case "email":
@@ -224,7 +224,7 @@ const PaymentPage = () => {
 
     // Validate name
     if (!name.trim()) {
-      newErrors.name = t("name_required");
+      newErrors.name = t("full_name_required");
       isValid = false;
     }
 
@@ -234,7 +234,7 @@ const PaymentPage = () => {
       newErrors.phone = t("phone_required");
       isValid = false;
     } else if (!phoneRegex.test(phone)) {
-      newErrors.phone = t("invalid_phone_format");
+      newErrors.phone = t("invalid_phone");
       isValid = false;
     }
 
@@ -289,12 +289,12 @@ const PaymentPage = () => {
         return_district_id: null,
         return_ward_code: "",
         client_order_code: "",
-        from_name: "Gia Bảo Shop",
+        from_name: "Moji Shop",
         from_phone: "0357747175",
         from_address:
           "DHNL, Phường Linh Tây, Thành Phố Thủ Đức 1, Hồ Chí Minh, Vietnam",
-        from_ward_name: "Phường 14",
-        from_district_name: "Quận 10",
+        from_ward_name: "Phường Linh Tây",
+        from_district_name: "Quận Thủ Đức",
         from_province_name: "HCM",
         to_name: name,
         to_phone: phone,
@@ -361,7 +361,7 @@ const PaymentPage = () => {
             user.point = vnpResponseCode
               ? user.point - point
               : user.point - pointAccepted;
-            showToast("Mua hàng thành công");
+            showToast(t("order_successful"));
             setLoadingPaying(false);
             navigate("/payment_success");
           })
@@ -472,7 +472,7 @@ const PaymentPage = () => {
                   setPhone(e.target.value);
                   setErrors((prev) => ({ ...prev, phone: "" }));
                 }}
-                onBlur={() => validateField("phone", phone)} // Validation khi rời chuột
+                onBlur={() => validateField("phone", phone)}
                 type="text"
                 className="w-full p-2 border rounded outline-primary border-line"
                 placeholder={t("phone") + "*"}
@@ -589,7 +589,7 @@ const PaymentPage = () => {
                       if (!wardValSelected) {
                         setErrors((prev) => ({ ...prev, ward: t("ward_required") }));
                       }
-                    }} // Validation khi rời chuột
+                    }}
                     className="w-full p-2 border rounded outline-primary border-line"
                   >
                     <option value="">{t("ward_commune")}</option>
@@ -723,7 +723,7 @@ const PaymentPage = () => {
                         setErrors((prev) => ({ ...prev, discount: t("not_enough_discount_points") }));
                         showToast(t("not_enough_discount_points"));
                       }
-                    }} // Validation khi rời chuột
+                    }}
                     inputMode="numeric"
                     pattern="[0-9]"
                     className="p-2 w-32 border rounded outline-primary border-line"

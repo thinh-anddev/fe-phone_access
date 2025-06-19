@@ -19,7 +19,6 @@ const Header = () => {
   const url = window.location.href;
   const { i18n, t } = useTranslation();
 
-  // Khởi tạo selectedLanguage dựa trên localStorage
   const languages = [
     { code: "en", name: "English" },
     { code: "vi", name: "Tiếng Việt" },
@@ -30,7 +29,7 @@ const Header = () => {
     const selectedLang = languages.find(
         (lang) => lang.code === savedLanguageCode
     );
-    return selectedLang ? selectedLang.name : "Tiếng Việt"; // Mặc định là Tiếng Việt nếu không tìm thấy
+    return selectedLang ? selectedLang.name : "Tiếng Việt";
   };
 
   const [selectedLanguage, setSelectedLanguage] = useState(getInitialLanguage);
@@ -76,7 +75,6 @@ const Header = () => {
     setIsDropdownOpen(false);
   };
 
-  // Đồng bộ ngôn ngữ khi component mount
   useEffect(() => {
     const savedLanguageCode = localStorage.getItem("language");
     if (savedLanguageCode && savedLanguageCode !== i18n.language) {

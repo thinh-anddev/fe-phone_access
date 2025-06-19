@@ -17,27 +17,27 @@ const ContactPage: React.FC = () => {
 
     const validateFullName = (value: string) => {
         if (!value.trim()) {
-            return "Họ tên không được để trống";
+            return t("full_name_required");
         }
         if (!/^[a-zA-ZÀ-ỹ\s]+$/.test(value)) {
-            return "Họ tên chỉ được chứa chữ cái và khoảng trắng";
+            return t("full_name_invalid");
         }
         return "";
     };
 
     const validateEmail = (value: string) => {
         if (!value.trim()) {
-            return "Email không được để trống";
+            return t("email_required");
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-            return "Email không đúng định dạng";
+            return t("email_invalid");
         }
         return "";
     };
 
     const validateContent = (value: string) => {
         if (!value.trim()) {
-            return "Nội dung không được để trống";
+            return t("content_required");
         }
         return "";
     };
