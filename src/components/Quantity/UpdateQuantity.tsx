@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { ToastContext } from "../../hooks/ToastMessage/ToastContext";
 import { updateCarts } from "@/pages/Cart/api";
+import { useTranslation } from "react-i18next";
 
 interface UpdateQuantityProps {
   productQuantity: number;
@@ -16,10 +17,11 @@ const UpdateQuantity: React.FC<UpdateQuantityProps> = ({
   cartDetailID,
 }) => {
   const { showToast } = useContext(ToastContext);
+  const { t } = useTranslation();
 
   const increaseQuantity = async () => {
     if (quantity >= productQuantity)
-      return showToast("Số lượng sản phẩm không đủ");
+      return showToast(t("not_enough_stock"));
     setQuantity(quantity + 1);
 
     if (cartDetailID) {
@@ -31,7 +33,7 @@ const UpdateQuantity: React.FC<UpdateQuantityProps> = ({
     if (quantity - 1 > 0) {
       setQuantity(quantity - 1);
       cartDetailID && (await updateCarts(cartDetailID, quantity - 1));
-    } else showToast("Số lượng phải lớn hơn 0");
+    } else showToast(t('quantity_must_be_positive'));
   };
 
   return (
