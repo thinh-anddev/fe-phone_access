@@ -5,7 +5,6 @@ import ChangePassword from './ChangePassword';
 import { LoginContext } from '@/hooks/LoginStatus/LoginContext';
 import { useNavigate } from 'react-router-dom';
 import Address from './Address';
-import Language from './Language';
 import { useTranslation } from 'react-i18next';
 
 const AccountPage = () => {
@@ -79,7 +78,6 @@ const AccountPage = () => {
           {activeTab === 0 && <UserProfile />}
           {activeTab === 1 && <OrdersHistory />}
           {activeTab === 2 && <ChangePassword />}
-          {/* {activeTab === 3 && <Language />} */}
           {activeTab === 3 && <Address />}
         </div>
       </div>

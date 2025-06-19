@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getAuthHeader } from "@/api/Order.ts";
+import i18n from 'i18next';
 
 const addAddress = async (body: any) => {
     try {
@@ -19,10 +20,10 @@ const addAddress = async (body: any) => {
                 }
             },
             { headers: getAuthHeader() })
-        return { message: "Insert address successfully", data: res.data.data }
+        return { message: i18n.t("insert_success"), data: res.data.data }
     } catch (error) {
         console.log(error);
-        return { message: "Fail to add address" }
+        return { message: i18n.t("insert_failed") }
     }
 }
 
