@@ -10,6 +10,7 @@ import ShippingStatusComp from "./components/ShippingStatus";
 import PaymentStatusComp from "./components/PaymentStatus";
 import { ShippingLabel, ShippingStatus } from "@/utils/enum";
 import { ToastContext } from "@/hooks/ToastMessage/ToastContext";
+import { useTranslation } from "react-i18next"
 
 interface PopupViewDetailProps {
   order: OrderType | undefined;
@@ -20,28 +21,29 @@ interface PopupViewDetailProps {
 const PopupViewDetail: React.FC<PopupViewDetailProps> = ({ order, hide, onUpdateSuccess }) => {
   const [orderStatus, setOrderStatus] = useState(order?.status);
   const toast = useContext(ToastContext);
+  const { t } = useTranslation();
 
   const change = async (orderId: number, s: number) => {
     if (s === ShippingStatus.CANCELLED)
-      return toast.showToast("Đơn hàng đã được huỷ");
+      return toast.showToast(t("order_cancelled"));
     if (s === ShippingStatus.SUCCESS)
-      return toast.showToast("Đơn hàng đã được giao thành công");
+      return toast.showToast(t("order_delivered"));
     if (s === ShippingStatus.FAIL)
-      return toast.showToast("Đơn hàng đã thất bại");
+      return toast.showToast(t("order_failed"));
     if (s === ShippingStatus.RETURNED)
-      return toast.showToast("Đơn hàng đã được trả lại");
+      return toast.showToast(t("order_returned"));
     if (s === ShippingStatus.DELIVERY)
-      return toast.showToast("Đơn hàng đang giao hàng, không thể huỷ");
+      return toast.showToast(t("order_shipping"));
     if (s === ShippingStatus.DELAYED)
-      return toast.showToast("Đơn hàng đang chờ giao lại, không thể huỷ");
+      return toast.showToast(t("order_delayed"));
 
     const response = await update(orderId, s);
     if (response.success) {
-      toast.showToast("Cập nhật thành công");
+      toast.showToast(t("update_success"));
       onUpdateSuccess();
       hide();
     } else {
-      toast.showToast("Cập nhật thất bại");
+      toast.showToast(t("update_failed"));
     }
   };
 
@@ -57,10 +59,10 @@ const PopupViewDetail: React.FC<PopupViewDetailProps> = ({ order, hide, onUpdate
         <div className="flex justify-between items-center mb-4">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-3">
-              <h2 className="text-xl font-bold">Mã đơn hàng: #{order.id}</h2>
+              <h2 className="text-xl font-bold">{t("order_code")}: #{order.id}</h2>
               <PaymentStatusComp status={order.paymentStatus} />
             </div>
-            <p className="text-gray-600">Ngày đặt: {order.createDate}</p>
+            <p className="text-gray-600">{t("order_date")}: {order.createDate}</p>
           </div>
           <IoMdClose
             className="text-3xl cursor-pointer hover:text-primary transition"
@@ -70,7 +72,7 @@ const PopupViewDetail: React.FC<PopupViewDetailProps> = ({ order, hide, onUpdate
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
-            <h3 className="font-semibold mb-2">Thông tin người nhận</h3>
+            <h3 className="font-semibold mb-2">{t("recipient_info")}</h3>
             <p>#{order.customer.id} - {order.customer.username}</p>
             <div className="flex items-center gap-2 mt-1">
               <FaHome className="text-primary" />
@@ -78,28 +80,28 @@ const PopupViewDetail: React.FC<PopupViewDetailProps> = ({ order, hide, onUpdate
             </div>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
-            <h3 className="font-semibold mb-2">Ghi chú</h3>
+            <h3 className="font-semibold mb-2">{t("note")}</h3>
             <p className="text-gray-600">{order.note || "Không có ghi chú"}</p>
           </div>
           <div className="p-4 bg-gray-50 rounded-lg shadow-sm">
-            <h3 className="font-semibold mb-2">Tổng tiền</h3>
+            <h3 className="font-semibold mb-2">{t("total_amount")}</h3>
             <div className="flex justify-between">
-              <span>Tạm tính:</span>
+              <span>{t("provisional")}:</span>
               <span>{formatPrice((order.total || 0) + (order.discount || 0))}</span>
             </div>
             <div className="flex justify-between text-orange-500">
-              <span>Giảm giá:</span>
+              <span>{t("discount")}:</span>
               <span>-{formatPrice(order.discount || 0)}</span>
             </div>
             <div className="flex justify-between font-bold text-red-500">
-              <span>Tổng tiền:</span>
+              <span>{t("total_amount")}:</span>
               <span>{formatPrice(order.total || 0)}</span>
             </div>
           </div>
         </div>
 
         <div className="mb-4">
-          <h3 className="font-semibold mb-2">Trạng thái vận chuyển</h3>
+          <h3 className="font-semibold mb-2">{t("shipping_status")}</h3>
           <select
             value={orderStatus}
             onChange={(e) => setOrderStatus(parseInt(e.target.value))}
@@ -119,7 +121,7 @@ const PopupViewDetail: React.FC<PopupViewDetailProps> = ({ order, hide, onUpdate
         </div>
 
         <div className="p-4 bg-gray-50 rounded-lg shadow-sm mb-4">
-          <h3 className="font-semibold mb-2">Sản phẩm</h3>
+          <h3 className="font-semibold mb-2">{t("products")}</h3>
           {order.orderDetails?.map((detail) => (
             <div key={detail.id} className="flex items-center gap-4 mb-3">
               <img
@@ -131,7 +133,7 @@ const PopupViewDetail: React.FC<PopupViewDetailProps> = ({ order, hide, onUpdate
                 <p className="font-semibold">{detail.product.name}</p>
                 <p className="text-gray-600">{detail.phoneCategory?.name || ""}</p>
               </div>
-              <p>Số lượng: {detail.quantity}</p>
+              <p>{t("quantity")}: {detail.quantity}</p>
               <p className="font-semibold">{formatPrice(detail.price)}</p>
             </div>
           ))}
@@ -142,13 +144,13 @@ const PopupViewDetail: React.FC<PopupViewDetailProps> = ({ order, hide, onUpdate
             onClick={hide}
             className="px-5 py-2 bg-gray-200 rounded-md hover:bg-gray-300 transition"
           >
-            Hủy
+            {t("cancel")}
           </button>
           <button
             onClick={() => saveChangeOrder(order)}
             className="px-5 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition"
           >
-            Cập nhật
+            {t("update")}
           </button>
         </div>
       </div>
@@ -161,13 +163,14 @@ const OrdersManagePage = () => {
   const [orderEditing, setOrderEditing] = useState<OrderType>();
   const [viewDetail, setViewDetail] = useState(false);
   const toast = useContext(ToastContext);
+  const { t } = useTranslation();
 
   const fetchOrders = async () => {
     const response = await getAllOrders();
     if (response.success) {
       setOrders(response.orders);
     } else {
-      toast.showToast("Lấy danh sách đơn hàng thất bại");
+      toast.showToast(t("fetch_orders_failed"));
     }
   };
 
@@ -194,20 +197,20 @@ const OrdersManagePage = () => {
         />
       )}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Quản lý đơn hàng</h1>
+        <h1 className="text-2xl font-bold">{t("manage_orders")}</h1>
 
       </div>
 
       <div className="overflow-x-auto">
         <div className="min-w-[1000px]">
           <div className="grid grid-cols-12 gap-4 bg-gray-50 p-3 rounded-t-md font-semibold text-gray-700">
-            <div className="col-span-1 flex items-center gap-2">Mã DH</div>
-            <div className="col-span-2">Khách hàng</div>
-            <div className="col-span-2">Tổng tiền</div>
-            <div className="col-span-1">Ngày đặt</div>
-            <div className="col-span-2 text-center">Thanh toán</div>
-            <div className="col-span-2 text-center">Trạng thái</div>
-            <div className="col-span-2 text-center">Hành động</div>
+            <div className="col-span-1 flex items-center gap-2">{t("order_code_short")}</div>
+            <div className="col-span-2">{t("customer")}</div>
+            <div className="col-span-2">{t("total")}</div>
+            <div className="col-span-1">{t("order_date")}</div>
+            <div className="col-span-2 text-center">{t("payment")}</div>
+            <div className="col-span-2 text-center">{t("status")}</div>
+            <div className="col-span-2 text-center">{t("action")}</div>
           </div>
           {orders.map((order) => (
             <div
@@ -234,7 +237,7 @@ const OrdersManagePage = () => {
                 <FaPen
                   onClick={() => handleViewDetail(order)}
                   className="cursor-pointer hover:text-primary transition"
-                  title="Xem và chỉnh sửa"
+                  title={t("view_edit")}
                 />
               </div>
             </div>

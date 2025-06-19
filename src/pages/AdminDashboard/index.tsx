@@ -8,10 +8,12 @@ import ReportPage from "./report";
 import { LoginContext } from "@/hooks/LoginStatus/LoginContext";
 import { getUserFromSession } from "@/utils/User";
 import ContactManagePage from "./ContactManagePage";
+import { useTranslation } from "react-i18next";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user, setUser, handleLogout } = useContext(LoginContext);
+  const { t } = useTranslation();
 
   function navigateTo(link: string) {
     navigate(link);
@@ -29,11 +31,11 @@ const AdminDashboard = () => {
     }
   }, [setUser, navigate]);
   const tabs = [
-    "Báo cáo thu nhập",
-    "Quản lý sản phẩm",
-    "Quản lý đơn hàng",
-    "Quản lý người dùng",
-    "Quản lý phản hồi",
+    t("revenue_report"),
+    t("manage_products"),
+    t("manage_orders"),
+    t("manage_users"),
+    t("manage_contacts"),
   ];
   const [tabActive, setTabActive] = useState(tabs[0]);
   const handleClickTab = (tab: string) => {
@@ -72,7 +74,7 @@ const AdminDashboard = () => {
               onClick={() => navigateTo("/account")}
               className="transition-all cursor-pointer hover:text-primary"
             >
-              {user ? user.username : "Khách"}
+              {user ? user.username : t("guest")}
             </div>
             <div
               onClick={() => {
