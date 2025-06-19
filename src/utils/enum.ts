@@ -20,15 +20,15 @@ export enum ShippingStatus {
 }
 
 export enum ShippingLabel {
-  PENDING = "Chờ xác nhận",
-  PROCESSING = "Đang xử lý",
-  CONFIRMED = "Đã xác nhận",
-  DELIVERY = "Đang giao hàng",
-  DELAYED = "Hoãn, chờ giao lại",
-  RETURNED = "Đã trả hàng",
-  CANCELLED = "Đã hủy",
-  FAIL = "Thất bại",
-  SUCCESS = "Thành công",
+  PENDING = "pending_confirmation",
+  PROCESSING = "processing",
+  CONFIRMED = "confirmed",
+  DELIVERY = "delivering",
+  DELAYED = "rescheduled",
+  RETURNED = "returned",
+  CANCELLED = "cancel",
+  FAIL = "fail",
+  SUCCESS = "successful",
 }
 export enum PaymentStatus {
   UNPAID = 0,

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import Chart from "./Chart";
 import { getAllYears, getRevenueInYear } from "@/api/Order";
+import { useTranslation } from "react-i18next";
 
 export type SeriesItem = {
   name: string;
@@ -13,6 +14,7 @@ const EarningReportCard = () => {
   const [activeYear, setActiveYear] = useState(years && years[0]);
   const [xAxis, setXAxis] = useState<string[]>([]);
   const [yAxis, setYAxis] = useState<SeriesItem[]>([]);
+  const { t } = useTranslation();
   const xUnique = [
     "Jan",
     "Feb",
@@ -67,10 +69,10 @@ const EarningReportCard = () => {
         <div className="flex justify-between">
           <div className="flex flex-col gap-[2px]">
             <div className="text-[18px] font-medium leading-6 opacity-90">
-              Báo cáo doanh thu
+              {t("revenue_report")}
             </div>
             <div className="left-5 text-[13px] opacity-50">
-              Tổng quan {activeYear}
+              {t("overview")} {activeYear}
             </div>
           </div>
           <div>

@@ -307,5 +307,7 @@
     "verifyCodeTitle": "Enter verification code",
     "verifyBtn": "Verify",
     "passwordMismatch": "Passwords do not match!",
-    "invalidVerifyCode": "Invalid verification code"
+    "invalidVerifyCode": "Invalid verification code",
+    "overview": "Overview",
+    "fail": "Failed"
 }
