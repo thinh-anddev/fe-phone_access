@@ -10,7 +10,7 @@ const SearchBar = () => {
   const [results, setResults] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const navigate = useNavigate();
-  const { t } = useTranslation(); // 🆕
+  const { t } = useTranslation();
 
   const handleInputChange = (e: any) => {
     const query = e.target.value;
