@@ -309,5 +309,7 @@
     "passwordMismatch": "Passwords do not match!",
     "invalidVerifyCode": "Invalid verification code",
     "overview": "Overview",
-    "fail": "Failed"
+    "fail": "Failed",
+    "passwordRequired": "Password is required",
+    "passwordTooShort": "Password too short"
 }
