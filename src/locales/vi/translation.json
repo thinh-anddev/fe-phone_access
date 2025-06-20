@@ -309,6 +309,8 @@
     "passwordMismatch": "Mật khẩu không trùng khớp!",
     "invalidVerifyCode": "Mã xác thực không hợp lệ",
     "overview": "Tổng quan",
-    "fail": "Thất bại"
+    "fail": "Thất bại",
+    "passwordRequired": "Bắt buộc nhập mật khẩu",
+    "passwordTooShort": "Mật khẩu quá ngắn"
 
 }

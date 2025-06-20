@@ -13,6 +13,7 @@ const Register = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isValidRegister, setIsValidRegister] = useState(false);
+    const [errors, setErrors] = useState({ userName: "", email: "", password: "", confirmPassword: "" });
     const { showToast } = useContext(ToastContext);
     const { setUser } = useContext(LoginContext);
     const [showPopupVerify, setShowPopupVerify] = useState(false);
@@ -21,9 +22,71 @@ const Register = () => {
     const navigator = useNavigate();
     const { t } = useTranslation();
 
+    // Validation functions
+    const validateUserName = (value) => {
+        if (!value) {
+            return t("full_name_required");
+        }
+        if (value.length < 2) {
+            return t("fullNameTooShort");
+        }
+        return "";
+    };
+
+    const validateEmail = (value) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!value) {
+            return t("email_required");
+        }
+        if (!emailRegex.test(value)) {
+            return t("email_invalid");
+        }
+        return "";
+    };
+
+    const validatePassword = (value) => {
+        if (!value) {
+            return t("passwordRequired");
+        }
+        if (value.length < 8) {
+            return t("passwordTooShort");
+        }
+        // if (!/[A-Z]/.test(value) || !/[0-9]/.test(value)) {
+        //     return t("passwordComplexity");
+        // }
+        return "";
+    };
+
+    const validateConfirmPassword = (value) => {
+        if (!value) {
+            return t("passwordRequired");
+        }
+        if (value !== password) {
+            return t("passwordMismatch");
+        }
+        return "";
+    };
+
+    const validateForm = () => {
+        const userNameError = validateUserName(userName);
+        const emailError = validateEmail(email);
+        const passwordError = validatePassword(password);
+        const confirmPasswordError = validateConfirmPassword(confirmPassword);
+
+        setErrors({
+            userName: userNameError,
+            email: emailError,
+            password: passwordError,
+            confirmPassword: confirmPasswordError
+        });
+
+        return !userNameError && !emailError && !passwordError && !confirmPasswordError;
+    };
+
     const handleRegister = async () => {
-        if (confirmPassword !== password) {
-            showToast(t("register.passwordMismatch"));
+        if (!validateForm()) {
+            showToast(t("invalidForm"));
             return;
         }
         setIsLoadingRegister(true);
@@ -76,34 +139,86 @@ const Register = () => {
     return (
         <div className="flex flex-col gap-y-3">
             {showPopupVerify && <PopupVerify />}
-            <input
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                className="border border-line rounded p-2"
-                type="text"
-                placeholder={t("fullName")}
-            />
-            <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="border border-line rounded p-2"
-                type="text"
-                placeholder="Email (*)"
-            />
-            <input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="border border-line rounded p-2"
-                type="password"
-                placeholder={t("password")}
-            />
-            <input
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="border border-line rounded p-2"
-                type="password"
-                placeholder={t("confirmPassword")}
-            />
+            <div>
+                <input
+                    value={userName}
+                    onChange={(e) => {
+                        setUserName(e.target.value);
+                        setErrors({ ...errors, userName: "" });
+                    }}
+                    onBlur={(e) => {
+                        setErrors({ ...errors, userName: validateUserName(e.target.value) });
+                    }}
+                    className={`border border-line rounded p-2 w-full ${
+                        errors.userName && "border-red-500"
+                    }`}
+                    type="text"
+                    placeholder={t("fullName")}
+                />
+                {errors.userName && (
+                    <p className="text-red-500 text-sm mt-1">{errors.userName}</p>
+                )}
+            </div>
+            <div>
+                <input
+                    value={email}
+                    onChange={(e) => {
+                        setEmail(e.target.value);
+                        setErrors({ ...errors, email: "" });
+                    }}
+                    onBlur={(e) => {
+                        setErrors({ ...errors, email: validateEmail(e.target.value) });
+                    }}
+                    className={`border border-line rounded p-2 w-full ${
+                        errors.email && "border-red-500"
+                    }`}
+                    type="text"
+                    placeholder="Email (*)"
+                />
+                {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                )}
+            </div>
+            <div>
+                <input
+                    value={password}
+                    onChange={(e) => {
+                        setPassword(e.target.value);
+                        setErrors({ ...errors, password: "" });
+                    }}
+                    onBlur={(e) => {
+                        setErrors({ ...errors, password: validatePassword(e.target.value) });
+                    }}
+                    className={`border border-line rounded p-2 w-full ${
+                        errors.password && "border-red-500"
+                    }`}
+                    type="password"
+                    placeholder={t("password")}
+                />
+                {errors.password && (
+                    <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                )}
+            </div>
+            <div>
+                <input
+                    value={confirmPassword}
+                    onChange={(e) => {
+                        setConfirmPassword(e.target.value);
+                        setErrors({ ...errors, confirmPassword: "" });
+                    }}
+                    onBlur={(e) => {
+                        setErrors({ ...errors, confirmPassword: validateConfirmPassword(e.target.value) });
+                    }}
+                    className={`border border-line rounded p-2 w-full ${
+                        errors.confirmPassword && "border-red-500"
+                    }`}
+                    type="password"
+                    placeholder={t("confirmPassword")}
+                />
+                {errors.confirmPassword && (
+                    <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+                )}
+            </div>
             <Button
                 isLoading={isLoadingRegister}
                 onClick={handleRegister}
